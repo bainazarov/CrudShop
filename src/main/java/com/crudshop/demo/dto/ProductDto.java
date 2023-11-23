@@ -1,26 +1,37 @@
 package com.crudshop.demo.dto;
 
 import com.crudshop.demo.entity.Categories;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Value;
+import org.springframework.lang.Nullable;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 
-@Data
+@Value
 @Builder
 public class ProductDto {
 
-    @NotBlank(message = "Поле не может быть пустым")
-    private String name;
+    UUID id;
 
-    private String description;
+    @Nullable
+    String article;
 
-    private Categories categories;
+    @Nullable
+    String name;
 
-    @NotNull(message = "Поле не может быть пустым")
-    private double price;
+    @Nullable
+    String description;
 
-    @NotNull(message = "Поле не может быть пустым")
-    private Integer quantity;
+    @Nullable
+    Categories categories;
+
+    double price;
+
+    Integer quantity;
+
+    LocalDateTime lastQuantityChange;
+
+    LocalDateTime createdAt;
 }

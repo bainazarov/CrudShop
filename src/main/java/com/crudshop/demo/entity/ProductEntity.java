@@ -1,8 +1,20 @@
 package com.crudshop.demo.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -22,6 +34,9 @@ public class ProductEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
+    @Column(name = "article")
+    private String article;
+
     @Column(name = "name")
     private String name;
 
@@ -29,6 +44,7 @@ public class ProductEntity {
     private String description;
 
     @Column(name = "categories")
+    @Enumerated(EnumType.STRING)
     private Categories categories;
 
     @Column(name = "price")
@@ -37,9 +53,11 @@ public class ProductEntity {
     @Column(name = "quantity")
     private Integer quantity;
 
+    @UpdateTimestamp
     @Column(name = "last_quantity_change")
     private LocalDateTime lastQuantityChange;
 
-    @Column(name = "created_date")
-    private LocalDateTime createdDate;
+    @CreationTimestamp
+    @Column(name = "created_date", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 }
