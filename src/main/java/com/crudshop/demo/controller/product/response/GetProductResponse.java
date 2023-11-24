@@ -14,6 +14,8 @@ public class GetProductResponse {
 
     private UUID id;
 
+    private String article;
+
     private String name;
 
     private String description;

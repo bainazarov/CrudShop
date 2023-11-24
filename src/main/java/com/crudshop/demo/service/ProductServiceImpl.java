@@ -22,6 +22,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public UUID createProduct(final ProductDto productDto) {
         final ProductEntity entity = ProductEntity.builder()
+                .article(productDto.getArticle())
                 .name(productDto.getName())
                 .description(productDto.getDescription())
                 .categories(productDto.getCategories())
@@ -39,6 +40,7 @@ public class ProductServiceImpl implements ProductService {
 
         return ProductDto.builder()
                 .id(productDto.getId())
+                .article(productDto.getArticle())
                 .name(productDto.getName())
                 .description(productDto.getDescription())
                 .categories(productDto.getCategories())
@@ -81,6 +83,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll().stream()
                 .map(entity -> ProductDto.builder()
                         .id(entity.getId())
+                        .article(entity.getArticle())
                         .name(entity.getName())
                         .description(entity.getDescription())
                         .categories(entity.getCategories())

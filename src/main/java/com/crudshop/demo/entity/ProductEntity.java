@@ -33,6 +33,9 @@ public class ProductEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
+    @Column(name = "article")
+    private String article;
+
     @Column(name = "name")
     private String name;
 
