@@ -1,0 +1,25 @@
+server:
+  servlet:
+    context-path: /my-app
+  port: 8081
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/CrudShop
+    username: postgres
+    password: baynazarow2971
+
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+
+  liquibase:
+    change-log: classpath:db/changelog/changelog.xml
+
+logging:
+  level:
+    root: INFO
+    org.springframework: INFO
+    com.crudshop.demo: INFO
+
