@@ -33,7 +33,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDto getProductById(UUID id) {
+    public ProductDto getProductById(final UUID id) {
         final ProductEntity productDto = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Продукт с таким id не был найден "));
 
@@ -51,7 +51,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public UUID updateProduct(UUID id, final ProductDto productDto) {
+    public UUID updateProduct(final UUID id, final ProductDto productDto) {
         final ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Продукт с таким id не был найден "));
 
@@ -69,7 +69,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteProduct(UUID id) {
+    public void deleteProduct(final UUID id) {
         productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Продукт с таким id не был найден "));
 

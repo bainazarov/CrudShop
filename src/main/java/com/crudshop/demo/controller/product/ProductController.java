@@ -1,6 +1,5 @@
 package com.crudshop.demo.controller.product;
 
-
 import com.crudshop.demo.controller.product.request.CreateProductRequest;
 import com.crudshop.demo.controller.product.request.UpdateProductRequest;
 import com.crudshop.demo.controller.product.response.GetProductResponse;
@@ -23,19 +22,19 @@ public interface ProductController {
 
     @PostMapping
     @Operation(summary = "Регистрация продукта")
-    UUID createProduct(@RequestBody @Valid CreateProductRequest createProductRequest);
+    UUID createProduct(@RequestBody @Valid final CreateProductRequest createProductRequest);
 
     @GetMapping("/{id}")
     @Operation(summary = "Полученить продукт по ID")
-    GetProductResponse getProductById(@PathVariable UUID id);
+    GetProductResponse getProductById(@PathVariable final UUID id);
 
     @PutMapping("/{id}")
     @Operation(summary = "Обновление продукта по ID")
-    UUID updateProduct(@PathVariable UUID id, @RequestBody @Valid UpdateProductRequest request);
+    UUID updateProduct(@PathVariable final UUID id, @RequestBody @Valid final UpdateProductRequest request);
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Удалить продукт по ID")
-    ResponseEntity<Void> deleteProduct(@PathVariable UUID id);
+    ResponseEntity<Void> deleteProduct(@PathVariable final UUID id);
 
     @GetMapping
     @Operation(summary = "Получить все продукты")

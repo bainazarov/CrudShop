@@ -1,3 +1,8 @@
+server:
+  servlet:
+    context-path: /my-app
+  port: 8081
+
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -12,14 +17,9 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/changelog.xml
 
-server:
-    servlet:
-      context-path: /my-app
-    port: 8081
-
 logging:
-    level:
-      root: INFO
-      org.springframework: INFO
-      com.crudshop.demo: INFO
+  level:
+    root: INFO
+    org.springframework: INFO
+    com.crudshop.demo: INFO
 

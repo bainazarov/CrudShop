@@ -25,26 +25,26 @@ public class ProductControllerImpl implements ProductController {
     private final ConversionService conversionService;
 
     @Override
-    public UUID createProduct(CreateProductRequest request) {
-        ProductDto productDto = conversionService.convert(request, ProductDto.class);
+    public UUID createProduct(final CreateProductRequest request) {
+        final ProductDto productDto = conversionService.convert(request, ProductDto.class);
 
         return productService.createProduct(productDto);
     }
 
     @Override
-    public GetProductResponse getProductById(UUID id) {
-        ProductDto productDto = productService.getProductById(id);
+    public GetProductResponse getProductById(final UUID id) {
+        final ProductDto productDto = productService.getProductById(id);
 
         return conversionService.convert(productDto, GetProductResponse.class);
     }
 
     @Override
-    public UUID updateProduct(UUID id, UpdateProductRequest request) {
+    public UUID updateProduct(final UUID id, final UpdateProductRequest request) {
         return productService.updateProduct(id, conversionService.convert(request, ProductDto.class));
     }
 
     @Override
-    public ResponseEntity<Void> deleteProduct(UUID id) {
+    public ResponseEntity<Void> deleteProduct(final UUID id) {
         try {
             productService.deleteProduct(id);
         } catch (ProductNotFoundException e) {
@@ -56,10 +56,10 @@ public class ProductControllerImpl implements ProductController {
 
     @Override
     public List<GetProductResponse> findAll() {
-        List<ProductDto> productDtoList = productService.getAllProducts();
+        final List<ProductDto> productDtoList = productService.getAllProducts();
+
         return productDtoList.stream()
                 .map(product -> conversionService.convert(product, GetProductResponse.class))
                 .collect(Collectors.toList());
     }
-
 }
