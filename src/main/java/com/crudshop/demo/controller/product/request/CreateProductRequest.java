@@ -11,6 +11,8 @@ import lombok.Data;
 @Builder
 public class CreateProductRequest {
 
+    private String article;
+
     @NotBlank(message = "Name can not be null")
     private String name;
 

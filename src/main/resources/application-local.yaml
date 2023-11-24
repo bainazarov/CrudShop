@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    username: sa
+    password: 123
+    url: jdbc:h2:mem:CrudShop
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate: create
+
+  liquibase:
+    change-log: classpath:db/changelog/changelog.xml
+    enabled: false
+  h2:
+    console:
+      enabled: true

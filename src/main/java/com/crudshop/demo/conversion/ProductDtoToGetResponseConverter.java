@@ -11,6 +11,7 @@ public class ProductDtoToGetResponseConverter implements Converter<ProductDto, G
     public GetProductResponse convert(ProductDto source) {
         return GetProductResponse.builder()
                 .id(source.getId())
+                .article(source.getArticle())
                 .name(source.getName())
                 .description(source.getDescription())
                 .categories(source.getCategories())
