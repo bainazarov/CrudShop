@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -34,9 +33,6 @@ public class ProductEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "article")
-    private String article;
-
     @Column(name = "name")
     private String name;
 
@@ -47,14 +43,14 @@ public class ProductEntity {
     @Enumerated(EnumType.STRING)
     private Categories categories;
 
-    @Column(name = "price")
+    @Column(name = "price", nullable = false)
     private double price;
 
-    @Column(name = "quantity")
+    @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @UpdateTimestamp
-    @Column(name = "last_quantity_change")
+    @CreationTimestamp
+    @Column(name = "last_quantity_change", nullable = false)
     private LocalDateTime lastQuantityChange;
 
     @CreationTimestamp

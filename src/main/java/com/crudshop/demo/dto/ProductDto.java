@@ -16,9 +16,6 @@ public class ProductDto {
     UUID id;
 
     @Nullable
-    String article;
-
-    @Nullable
     String name;
 
     @Nullable

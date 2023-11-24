@@ -14,8 +14,6 @@ public class GetProductResponse {
 
     private UUID id;
 
-    private String article;
-
     private String name;
 
     private String description;
@@ -26,7 +24,6 @@ public class GetProductResponse {
 
     private Integer quantity;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd MMMM yyyy")
     private LocalDateTime lastQuantityChange;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd MMMM yyyy")

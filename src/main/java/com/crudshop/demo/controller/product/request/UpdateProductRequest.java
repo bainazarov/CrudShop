@@ -1,16 +1,16 @@
 package com.crudshop.demo.controller.product.request;
 
 import com.crudshop.demo.entity.Categories;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Data;
-
-import javax.validation.constraints.Positive;
-
 
 @Data
 @Builder
 public class UpdateProductRequest {
 
+    @NotBlank(message = "Name can not be null")
     private String name;
 
     private String description;

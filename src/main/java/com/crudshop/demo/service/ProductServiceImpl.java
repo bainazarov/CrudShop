@@ -1,4 +1,5 @@
 package com.crudshop.demo.service;
+
 import com.crudshop.demo.dto.ProductDto;
 import com.crudshop.demo.entity.ProductEntity;
 import com.crudshop.demo.exception.ProductNotFoundException;
@@ -6,9 +7,11 @@ import com.crudshop.demo.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,9 +20,8 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
 
     @Override
-    public UUID createProduct(ProductDto productDto) {
+    public UUID createProduct(final ProductDto productDto) {
         final ProductEntity entity = ProductEntity.builder()
-                .article(productDto.getArticle())
                 .name(productDto.getName())
                 .description(productDto.getDescription())
                 .categories(productDto.getCategories())
@@ -37,7 +39,6 @@ public class ProductServiceImpl implements ProductService {
 
         return ProductDto.builder()
                 .id(productDto.getId())
-                .article(productDto.getArticle())
                 .name(productDto.getName())
                 .description(productDto.getDescription())
                 .categories(productDto.getCategories())
@@ -50,9 +51,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public UUID updateProduct(UUID id, ProductDto productDto) {
+    public UUID updateProduct(UUID id, final ProductDto productDto) {
         final ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Продукт с таким id не был найден "));
+
+        if (!Objects.equals(product.getQuantity(), productDto.getQuantity())) {
+            product.setLastQuantityChange(LocalDateTime.now());
+        }
+
         product.setName(productDto.getName());
         product.setDescription(productDto.getDescription());
         product.setCategories(productDto.getCategories());
@@ -72,24 +78,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDto> getAllProducts() {
-        List<ProductEntity> productEntities = productRepository.findAll();
-        List<ProductDto> products = new ArrayList<>();
-
-        for (ProductEntity entity : productEntities) {
-            ProductDto productDto = ProductDto.builder()
-                    .id(entity.getId())
-                    .article(entity.getArticle())
-                    .name(entity.getName())
-                    .description(entity.getDescription())
-                    .categories(entity.getCategories())
-                    .price(entity.getPrice())
-                    .quantity(entity.getQuantity())
-                    .lastQuantityChange(entity.getLastQuantityChange())
-                    .createdAt(entity.getCreatedAt())
-                    .build();
-            products.add(productDto);
-        }
-
-        return products;
+        return productRepository.findAll().stream()
+                .map(entity -> ProductDto.builder()
+                        .id(entity.getId())
+                        .name(entity.getName())
+                        .description(entity.getDescription())
+                        .categories(entity.getCategories())
+                        .price(entity.getPrice())
+                        .quantity(entity.getQuantity())
+                        .lastQuantityChange(entity.getLastQuantityChange())
+                        .createdAt(entity.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
     }
 }

@@ -10,7 +10,6 @@ public class CreatedRequestToProductDto implements Converter<CreateProductReques
     @Override
     public ProductDto convert(CreateProductRequest source) {
         return ProductDto.builder()
-                .article(source.getArticle())
                 .name(source.getName())
                 .description(source.getDescription())
                 .categories(source.getCategories())

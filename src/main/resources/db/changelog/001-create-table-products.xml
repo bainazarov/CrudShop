@@ -5,7 +5,7 @@
     <changeSet id="1" author="Bainazarov Abdurakhmon">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="products" />
+                <tableExists tableName="products"/>
             </not>
         </preConditions>
         <createTable tableName="products">
@@ -25,7 +25,8 @@
             <column name="quantity" type="BIGINT" remarks="Количество оставшегося продукта">
                 <constraints nullable="false"/>
             </column>
-            <column name="last_quantity_change" type="TIMESTAMP" remarks="Дата последнего изменения количества продукта">
+            <column name="last_quantity_change" type="TIMESTAMP"
+                    remarks="Дата последнего изменения количества продукта">
                 <constraints nullable="false"/>
             </column>
             <column name="created_date" type="TIMESTAMP" remarks="Дата создания продукта">
