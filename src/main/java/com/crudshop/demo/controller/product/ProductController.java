@@ -25,11 +25,11 @@ public interface ProductController {
     UUID createProduct(@RequestBody @Valid final CreateProductRequest createProductRequest);
 
     @GetMapping("/{id}")
-    @Operation(summary = "Полученить продукт по ID")
+    @Operation(summary = "Получить продукт по ID")
     GetProductResponse getProductById(@PathVariable final UUID id);
 
     @PutMapping("/{id}")
-    @Operation(summary = "Обновление продукта по ID")
+    @Operation(summary = "Обновить продукт по ID")
     UUID updateProduct(@PathVariable final UUID id, @RequestBody @Valid final UpdateProductRequest request);
 
     @DeleteMapping("/{id}")
