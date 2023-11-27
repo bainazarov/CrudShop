@@ -1,5 +1,6 @@
 package com.crudshop.demo.service;
 
+import com.crudshop.demo.annotation.MeasureExecutionTime;
 import com.crudshop.demo.dto.ProductDto;
 import com.crudshop.demo.entity.ProductEntity;
 import com.crudshop.demo.exception.ArticleAlreadyExistsException;
@@ -22,6 +23,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
 
     @Override
+    @MeasureExecutionTime
     public UUID createProduct(final ProductDto productDto) {
         final Optional<ProductEntity> existingProduct = productRepository.findByArticle(productDto.getArticle());
         existingProduct.ifPresent(entity -> {
@@ -40,6 +42,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @MeasureExecutionTime
     public ProductDto getProductById(final UUID id) {
         final ProductEntity productDto = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Продукт с таким id не был найден "));
@@ -59,6 +62,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @MeasureExecutionTime
     public UUID updateProduct(final UUID id, final ProductDto productDto) {
         final ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Продукт с таким id не был найден "));
@@ -82,6 +86,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @MeasureExecutionTime
     public void deleteProduct(final UUID id) {
         productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Продукт с таким id не был найден "));
@@ -90,6 +95,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @MeasureExecutionTime
     public Page<ProductDto> getAllProducts(Pageable pageable) {
         return productRepository.findAll(pageable)
                 .map(entity -> ProductDto.builder()
