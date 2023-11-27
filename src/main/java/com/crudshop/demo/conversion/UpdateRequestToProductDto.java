@@ -10,6 +10,7 @@ public class UpdateRequestToProductDto implements Converter<UpdateProductRequest
     @Override
     public ProductDto convert(UpdateProductRequest source) {
         return ProductDto.builder()
+                .article(source.getArticle())
                 .name(source.getName())
                 .description(source.getDescription())
                 .categories(source.getCategories())
