@@ -10,7 +10,7 @@
         </preConditions>
         <addColumn tableName="products">
             <column name="article" type="VARCHAR(255)" remarks="Артикул продукта">
-                <constraints nullable="true"/>
+                <constraints nullable="true" unique="true"/>
             </column>
         </addColumn>
     </changeSet>

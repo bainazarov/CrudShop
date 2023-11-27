@@ -33,7 +33,7 @@ public class ProductEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "article")
+    @Column(name = "article", nullable = false, updatable = false)
     private String article;
 
     @Column(name = "name")

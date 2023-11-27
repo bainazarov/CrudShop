@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.UUID;
@@ -38,5 +39,6 @@ public interface ProductController {
 
     @GetMapping
     @Operation(summary = "Получить все продукты")
-    List<GetProductResponse> findAll();
+    List<GetProductResponse> findAll(@RequestParam(defaultValue = "0") final int page,
+                                     @RequestParam(defaultValue = "10") final int size);
 }

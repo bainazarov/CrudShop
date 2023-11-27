@@ -1,6 +1,8 @@
 package com.crudshop.demo.service;
 
 import com.crudshop.demo.dto.ProductDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,5 +19,5 @@ public interface ProductService {
 
     void deleteProduct(UUID id);
 
-    List<ProductDto> getAllProducts();
+    Page<ProductDto> getAllProducts(Pageable pageable);
 }

@@ -40,4 +40,10 @@ public class GlobalExceptionHandler {
         ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), "Некорректный формат ID", LocalDateTime.now());
         return ResponseEntity.badRequest().body(errorDetails);
     }
+
+    @ExceptionHandler(ArticleAlreadyExistsException.class)
+    protected ResponseEntity<ErrorDetails> handleArticleAlreadyExistsException(ArticleAlreadyExistsException e) {
+        ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
+    }
 }

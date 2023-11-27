@@ -2,16 +2,18 @@ package com.crudshop.demo.service;
 
 import com.crudshop.demo.dto.ProductDto;
 import com.crudshop.demo.entity.ProductEntity;
+import com.crudshop.demo.exception.ArticleAlreadyExistsException;
 import com.crudshop.demo.exception.ProductNotFoundException;
 import com.crudshop.demo.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +23,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public UUID createProduct(final ProductDto productDto) {
+        final Optional<ProductEntity> existingProduct = productRepository.findByArticle(productDto.getArticle());
+        if (existingProduct.isPresent()) {
+            throw new ArticleAlreadyExistsException("Продукт с таким артикулом уже существует");
+        }
         final ProductEntity entity = ProductEntity.builder()
                 .article(productDto.getArticle())
                 .name(productDto.getName())
@@ -79,8 +85,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> getAllProducts() {
-        return productRepository.findAll().stream()
+    public Page<ProductDto> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable)
                 .map(entity -> ProductDto.builder()
                         .id(entity.getId())
                         .article(entity.getArticle())
@@ -91,7 +97,6 @@ public class ProductServiceImpl implements ProductService {
                         .quantity(entity.getQuantity())
                         .lastQuantityChange(entity.getLastQuantityChange())
                         .createdAt(entity.getCreatedAt())
-                        .build())
-                .collect(Collectors.toList());
+                        .build());
     }
 }
