@@ -10,6 +10,8 @@ import lombok.Data;
 @Builder
 public class UpdateProductRequest {
 
+    private String article;
+
     @NotBlank(message = "Name can not be blank")
     private String name;
 

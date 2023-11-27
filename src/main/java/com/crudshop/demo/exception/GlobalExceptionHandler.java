@@ -11,6 +11,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -39,5 +40,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorDetails> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), "Некорректный формат ID", LocalDateTime.now());
         return ResponseEntity.badRequest().body(errorDetails);
+    }
+
+    @ExceptionHandler(ArticleAlreadyExistsException.class)
+    protected ResponseEntity<ErrorDetails> handleArticleAlreadyExistsException(ArticleAlreadyExistsException e) {
+        String errorMessage = Optional.ofNullable(e.getExistedProductId())
+                .map(id -> e.getMessage() + " id + " + id)
+                .orElseGet(e::getMessage);
+
+        ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), errorMessage, LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
     }
 }

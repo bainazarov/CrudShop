@@ -23,3 +23,7 @@ logging:
     org.springframework: INFO
     com.crudshop.demo: INFO
 
+app:
+  scheduling:
+    period: 30000
+    priceIncreasePercentage: 10

@@ -8,6 +8,9 @@ import com.crudshop.demo.exception.ProductNotFoundException;
 import com.crudshop.demo.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,10 +58,11 @@ public class ProductControllerImpl implements ProductController {
     }
 
     @Override
-    public List<GetProductResponse> findAll() {
-        final List<ProductDto> productDtoList = productService.getAllProducts();
+    public List<GetProductResponse> findAll(int page, int size) {
+        final Pageable pageable = PageRequest.of(page, size);
+        final Page<ProductDto> productPage = productService.getAllProducts(pageable);
 
-        return productDtoList.stream()
+        return productPage.getContent().stream()
                 .map(product -> conversionService.convert(product, GetProductResponse.class))
                 .collect(Collectors.toList());
     }
