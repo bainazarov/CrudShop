@@ -24,9 +24,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public UUID createProduct(final ProductDto productDto) {
         final Optional<ProductEntity> existingProduct = productRepository.findByArticle(productDto.getArticle());
-        if (existingProduct.isPresent()) {
-            throw new ArticleAlreadyExistsException("Продукт с таким артикулом уже существует");
-        }
+        existingProduct.ifPresent(entity -> {
+            throw new ArticleAlreadyExistsException("Продукт с таким артикулом уже существует", entity.getId());
+        });
         final ProductEntity entity = ProductEntity.builder()
                 .article(productDto.getArticle())
                 .name(productDto.getName())
@@ -63,10 +63,15 @@ public class ProductServiceImpl implements ProductService {
         final ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Продукт с таким id не был найден "));
 
+        if (productRepository.isArticleExists(productDto.getArticle())) {
+            throw new ArticleAlreadyExistsException("Продукт с таким артикулом уже существует");
+        }
+
         if (!Objects.equals(product.getQuantity(), productDto.getQuantity())) {
             product.setLastQuantityChange(LocalDateTime.now());
         }
 
+        product.setArticle(productDto.getArticle());
         product.setName(productDto.getName());
         product.setDescription(productDto.getDescription());
         product.setCategories(productDto.getCategories());

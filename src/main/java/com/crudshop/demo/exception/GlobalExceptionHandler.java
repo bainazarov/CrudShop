@@ -11,6 +11,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -43,7 +44,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ArticleAlreadyExistsException.class)
     protected ResponseEntity<ErrorDetails> handleArticleAlreadyExistsException(ArticleAlreadyExistsException e) {
-        ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now());
+        String errorMessage = Optional.ofNullable(e.getExistedProductId())
+                .map(id -> e.getMessage() + " id + " + id)
+                .orElseGet(e::getMessage);
+
+        ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), errorMessage, LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
     }
 }
