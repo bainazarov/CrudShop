@@ -10,7 +10,7 @@ import lombok.Data;
 @Builder
 public class UpdateProductRequest {
 
-    @NotBlank(message = "Name can not be null")
+    @NotBlank(message = "Name can not be blank")
     private String name;
 
     private String description;
