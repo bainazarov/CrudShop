@@ -17,13 +17,13 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ProductNotFoundException.class)
-    protected ResponseEntity<ErrorDetails> handleProductException(ProductNotFoundException e) {
+    protected ResponseEntity<ErrorDetails> handleProductNotFoundException(ProductNotFoundException e) {
         ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorDetails> handleValidationException(MethodArgumentNotValidException e) {
+    public ResponseEntity<ErrorDetails> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         BindingResult bindingResult = e.getBindingResult();
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
 
@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ErrorDetails> handleTypeMismatchException(MethodArgumentTypeMismatchException e) {
+    public ResponseEntity<ErrorDetails> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), "Некорректный формат ID", LocalDateTime.now());
         return ResponseEntity.badRequest().body(errorDetails);
     }
