@@ -25,6 +25,5 @@ logging:
 
 app:
   scheduling:
-    enabled: false
     period: 30000
     priceIncreasePercentage: 10

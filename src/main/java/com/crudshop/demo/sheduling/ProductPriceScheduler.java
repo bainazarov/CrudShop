@@ -1,39 +1,38 @@
 package com.crudshop.demo.sheduling;
 
+import com.crudshop.demo.entity.ProductEntity;
 import com.crudshop.demo.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 
 @Component
+@ConditionalOnProperty(name = "app.scheduling.enabled")
 public class ProductPriceScheduler {
 
     private final ProductRepository productRepository;
-    private final Boolean isEnabled;
     private final Double priceIncreasePercentage;
 
     public ProductPriceScheduler(ProductRepository productRepository,
-                                 @Value("${app.scheduling.enabled:false}") Boolean isEnabled,
                                  @Value("${app.scheduling.priceIncreasePercentage:10}") Double priceIncreasePercentage) {
         this.productRepository = productRepository;
-        this.isEnabled = isEnabled;
         this.priceIncreasePercentage = priceIncreasePercentage;
     }
 
     @Scheduled(fixedRateString = "${app.scheduling.period}")
     public void increaseProductPrice() {
+        List<ProductEntity> products = productRepository.findAll();
 
-        if (!isEnabled) {
-            return;
-        }
+        products.forEach(product -> {
+            double currentPrice = product.getPrice();
+            double newPrice = currentPrice * (1 + (priceIncreasePercentage / 100));
+            product.setPrice(newPrice);
+        });
 
-        productRepository.findAll().stream()
-                .peek(product -> {
-                    double currentPrice = product.getPrice();
-                    double newPrice = currentPrice * (1 + (priceIncreasePercentage / 100));
-                    product.setPrice(newPrice);
-                })
-                .forEach(productRepository::save);
+        productRepository.saveAll(products);
     }
 }

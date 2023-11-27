@@ -14,4 +14,5 @@ public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
 
     @Query("select case when (count(p) > 0) then true else false end from ProductEntity p where p.article = :article")
     boolean isArticleExists(String article);
+
 }
