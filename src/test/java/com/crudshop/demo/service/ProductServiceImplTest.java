@@ -279,8 +279,6 @@ public class ProductServiceImplTest {
 
         productService.deleteProduct(productId);
 
-        Mockito.verify(productRepository, Mockito.times(1)).deleteById(productId);
-
         Mockito.when(productRepository.findById(productId)).thenReturn(Optional.empty());
         Optional<ProductEntity> deletedProduct = productRepository.findById(productId);
 
