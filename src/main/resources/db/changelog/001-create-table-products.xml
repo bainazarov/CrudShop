@@ -19,7 +19,7 @@
             </column>
             <column name="categories" type="VARCHAR(255)" remarks="Категория продукта">
             </column>
-            <column name="price" type="DOUBLE PRECISION" remarks="Цена продукта">
+            <column name="price" type="NUMERIC(10,2)" remarks="Цена продукта">
                 <constraints nullable="false"/>
             </column>
             <column name="quantity" type="BIGINT" remarks="Количество оставшегося продукта">
