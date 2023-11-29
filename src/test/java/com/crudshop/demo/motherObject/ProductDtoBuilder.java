@@ -66,7 +66,7 @@ public class ProductDtoBuilder {
         return this;
     }
 
-    public ProductDtoBuilder withQuantity() {
+    public ProductDtoBuilder withQuantity(Integer quantity) {
         this.quantity = quantity;
         return this;
     }

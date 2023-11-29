@@ -6,6 +6,7 @@ import com.crudshop.demo.entity.ProductEntity;
 import com.crudshop.demo.exception.ArticleAlreadyExistsException;
 import com.crudshop.demo.exception.ProductNotFoundException;
 import com.crudshop.demo.motherObject.ProductDtoBuilder;
+import com.crudshop.demo.motherObject.ProductEntityBuilder;
 import com.crudshop.demo.repository.ProductRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -82,35 +83,32 @@ public class ProductServiceImplTest {
 
     @Test
     public void getProductByIdTest_WhenProductExists_ReturnsProductDto() {
-        UUID expectedProductId = UUID.randomUUID();
-        String expectedArticle = "666666";
-        String expectedName = "Яблоко";
-        String expectedDescription = "Красная спелая";
-        Categories expectedCategories = Categories.FRUIT;
-        double expectedPrice = 50.00;
-        Integer expectedQuantity = 25;
+        ProductDtoBuilder productDtoBuilder = ProductDtoBuilder.aProductDto();
+        ProductDto expectedProduct = productDtoBuilder.build();
 
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setId(expectedProductId);
-        productEntity.setArticle(expectedArticle);
-        productEntity.setName(expectedName);
-        productEntity.setDescription(expectedDescription);
-        productEntity.setCategories(expectedCategories);
-        productEntity.setPrice(expectedPrice);
-        productEntity.setQuantity(expectedQuantity);
+        ProductEntityBuilder productEntityBuilder = ProductEntityBuilder.aProductDto();
+        ProductEntity productEntity = productEntityBuilder
+                .withId(expectedProduct.getId())
+                .withArticle(expectedProduct.getArticle())
+                .withName(expectedProduct.getName())
+                .withDescription(expectedProduct.getDescription())
+                .withCategories(expectedProduct.getCategories())
+                .withPrice(expectedProduct.getPrice())
+                .withQuantity(expectedProduct.getQuantity())
+                .build();
 
-        when(productRepositoryMock.findById(expectedProductId)).thenReturn(Optional.of(productEntity));
+        when(productRepositoryMock.findById(expectedProduct.getId())).thenReturn(Optional.of(productEntity));
 
-        ProductDto actual = productServiceUT.getProductById(expectedProductId);
+        ProductDto actual = productServiceUT.getProductById(expectedProduct.getId());
 
         assertNotNull(actual);
-        assertEquals(expectedProductId, actual.getId());
-        assertEquals(expectedArticle, actual.getArticle());
-        assertEquals(expectedName, actual.getName());
-        assertEquals(expectedDescription, actual.getDescription());
-        assertEquals(expectedCategories, actual.getCategories());
-        assertEquals(expectedPrice, actual.getPrice());
-        assertEquals(expectedQuantity, actual.getQuantity());
+        assertEquals(expectedProduct.getId(), actual.getId());
+        assertEquals(expectedProduct.getArticle(), actual.getArticle());
+        assertEquals(expectedProduct.getName(), actual.getName());
+        assertEquals(expectedProduct.getDescription(), actual.getDescription());
+        assertEquals(expectedProduct.getCategories(), actual.getCategories());
+        assertEquals(expectedProduct.getPrice(), actual.getPrice());
+        assertEquals(expectedProduct.getQuantity(), actual.getQuantity());
     }
 
     @Test
@@ -123,49 +121,37 @@ public class ProductServiceImplTest {
 
     @Test
     public void updateProductTest_WhenProductExists_ReturnsProductId() {
-        UUID expectedProductId = UUID.randomUUID();
-        String expectedArticle = "123456";
-        String expectedName = "Манго";
-        String expectedDescription = "Спелый";
-        Categories expectedCategories = Categories.FRUIT;
-        double expectedPrice = 20.00;
-        int expectedQuantity = 15;
+        ProductDtoBuilder productDtoBuilder = ProductDtoBuilder.aProductDto();
+        ProductDto expectedProduct = productDtoBuilder.build();
 
-        ProductDto productDto = ProductDto.builder()
-                .article(expectedArticle)
-                .name(expectedName)
-                .description(expectedDescription)
-                .categories(expectedCategories)
-                .price(expectedPrice)
-                .quantity(expectedQuantity)
+        ProductEntityBuilder productEntityBuilder = ProductEntityBuilder.aProductDto();
+        ProductEntity productEntity = productEntityBuilder
+                .withId(expectedProduct.getId())
+                .withArticle("654321")
+                .withName("Слива")
+                .withDescription("Зеленый")
+                .withCategories(Categories.VEGETABLES)
+                .withPrice(25.00)
+                .withQuantity(25)
                 .build();
 
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setId(expectedProductId);
-        productEntity.setArticle("654321");
-        productEntity.setName("Слива");
-        productEntity.setDescription("Зеленый");
-        productEntity.setCategories(Categories.VEGETABLES);
-        productEntity.setPrice(25.00);
-        productEntity.setQuantity(25);
-
-        when(productRepositoryMock.findById(expectedProductId)).thenReturn(Optional.of(productEntity));
-        when(productRepositoryMock.isArticleExists(expectedArticle)).thenReturn(false);
+        when(productRepositoryMock.findById(expectedProduct.getId())).thenReturn(Optional.of(productEntity));
+        when(productRepositoryMock.isArticleExists(expectedProduct.getArticle())).thenReturn(false);
 
         ArgumentCaptor<ProductEntity> productEntityCaptor = ArgumentCaptor.forClass(ProductEntity.class);
         when(productRepositoryMock.save(productEntityCaptor.capture())).thenReturn(productEntity);
 
-        UUID updatedProductId = productServiceUT.updateProduct(expectedProductId, productDto);
+        UUID updatedProductId = productServiceUT.updateProduct(expectedProduct.getId(), expectedProduct);
 
-        assertEquals(expectedProductId, updatedProductId);
+        assertEquals(expectedProduct.getId(), updatedProductId);
 
         ProductEntity capturedProductEntity = productEntityCaptor.getValue();
-        assertEquals(expectedArticle, capturedProductEntity.getArticle());
-        assertEquals(expectedName, capturedProductEntity.getName());
-        assertEquals(expectedDescription, capturedProductEntity.getDescription());
-        assertEquals(expectedCategories, capturedProductEntity.getCategories());
-        assertEquals(expectedPrice, capturedProductEntity.getPrice());
-        assertEquals(expectedQuantity, capturedProductEntity.getQuantity());
+        assertEquals(expectedProduct.getArticle(), capturedProductEntity.getArticle());
+        assertEquals(expectedProduct.getName(), capturedProductEntity.getName());
+        assertEquals(expectedProduct.getDescription(), capturedProductEntity.getDescription());
+        assertEquals(expectedProduct.getCategories(), capturedProductEntity.getCategories());
+        assertEquals(expectedProduct.getPrice(), capturedProductEntity.getPrice());
+        assertEquals(expectedProduct.getQuantity(), capturedProductEntity.getQuantity());
     }
 
     @Test
@@ -199,25 +185,26 @@ public class ProductServiceImplTest {
 
     @Test
     public void updateProductTest_WhenQuantityChanges_SetsLastQuantityChange() {
-        UUID productId = UUID.randomUUID();
-        String article = "555555";
         int oldQuantity = 15;
         int newQuantity = 18;
 
-        ProductDto productDto = ProductDto.builder()
-                .article(article)
-                .quantity(newQuantity)
+        ProductDtoBuilder productDtoBuilder = ProductDtoBuilder.aProductDto();
+        ProductDto productDto = productDtoBuilder
+                .withQuantity(newQuantity)
                 .build();
 
-        ProductEntity existingProduct = new ProductEntity();
-        existingProduct.setId(productId);
-        existingProduct.setQuantity(oldQuantity);
+        ProductEntityBuilder productEntityBuilder = ProductEntityBuilder.aProductDto();
+        ProductEntity existingProduct = productEntityBuilder
+                .withId(productDto.getId())
+                .withQuantity(oldQuantity)
+                .build();
 
-        when(productRepositoryMock.findById(productId)).thenReturn(Optional.of(existingProduct));
-        when(productRepositoryMock.isArticleExists(article)).thenReturn(false);
+
+        when(productRepositoryMock.findById(productDto.getId())).thenReturn(Optional.of(existingProduct));
+        when(productRepositoryMock.isArticleExists(productDto.getArticle())).thenReturn(false);
         when(productRepositoryMock.save(Mockito.any(ProductEntity.class))).thenReturn(existingProduct);
 
-        productServiceUT.updateProduct(productId, productDto);
+        productServiceUT.updateProduct(productDto.getId(), productDto);
 
         assertNotNull(existingProduct.getLastQuantityChange());
         Assertions.assertNotEquals(existingProduct.getLastQuantityChange(), existingProduct.getCreatedAt());

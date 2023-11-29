@@ -51,32 +51,32 @@ public class ProductEntityBuilder {
         return this;
     }
 
-    public ProductEntityBuilder withUsername(String username) {
-        this.article = article;
-        return this;
-    }
-
     public ProductEntityBuilder withDescription(String description) {
         this.description = description;
         return this;
     }
 
-    public ProductEntityBuilder withPrice() {
+    public ProductEntityBuilder withCategories(Categories categories) {
+        this.categories = categories;
+        return this;
+    }
+
+    public ProductEntityBuilder withPrice(double price) {
         this.price = price;
         return this;
     }
 
-    public ProductEntityBuilder withQuantity() {
+    public ProductEntityBuilder withQuantity(Integer quantity) {
         this.quantity = quantity;
         return this;
     }
 
-    public ProductEntityBuilder withLastQuantityChange() {
+    public ProductEntityBuilder withLastQuantityChange(LocalDateTime lastQuantityChange) {
         this.lastQuantityChange = lastQuantityChange;
         return this;
     }
 
-    public ProductEntityBuilder withCreatedAt() {
+    public ProductEntityBuilder withCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
         return this;
     }
