@@ -5,10 +5,12 @@ import com.crudshop.demo.entity.Categories;
 import com.crudshop.demo.entity.ProductEntity;
 import com.crudshop.demo.exception.ArticleAlreadyExistsException;
 import com.crudshop.demo.exception.ProductNotFoundException;
+import com.crudshop.demo.motherObject.ProductDtoBuilder;
 import com.crudshop.demo.repository.ProductRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -22,137 +24,124 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 public class ProductServiceImplTest {
 
     @Mock
-    private ProductRepository productRepository;
+    private ProductRepository productRepositoryMock;
     @InjectMocks
-    private ProductServiceImpl productService;
+    private ProductServiceImpl productServiceUT;
 
     @Test
     public void createProductTest_WhenExistingProduct_ThrowsArticleAlreadyExistsException() {
         String article = "12345";
-        ProductDto productDto = ProductDto.builder()
-                .article(article)
+        ProductDto productDto = ProductDtoBuilder.aProductDto()
+                .withArticle(article)
                 .build();
 
         ProductEntity product = new ProductEntity();
         product.setId(UUID.randomUUID());
         product.setArticle(article);
 
-        Mockito.when(productRepository.findByArticle(article)).thenReturn(Optional.of(product));
+        when(productRepositoryMock.findByArticle(article)).thenReturn(Optional.of(product));
 
-        Assertions.assertThrows(ArticleAlreadyExistsException.class, () -> productService.createProduct(productDto));
+        assertThrows(ArticleAlreadyExistsException.class, () -> productServiceUT.createProduct(productDto),
+                "Ожидалось ArticleAlreadyExistsException, но он не сработал ");
+
+        verify(productRepositoryMock, times(0)).save(any());
     }
 
     @Test
     public void createProductTest_WhenNewProduct_ReturnsProductDto() {
-        String article = "666666";
-        String name = "Груша";
-        String description = "Спелая";
-        Categories categories = Categories.FRUIT;
-        double price = 22.00;
-        Integer quantity = 25;
-
+        String expectedArticle = "Expected_article";
         ProductDto productDto = ProductDto.builder()
-                .article(article)
-                .name(name)
-                .description(description)
-                .categories(categories)
-                .price(price)
-                .quantity(quantity)
+                .article(expectedArticle)
                 .build();
 
-        Mockito.when(productRepository.findByArticle(article)).thenReturn(Optional.empty());
+        when(productRepositoryMock.findByArticle(any())).thenReturn(Optional.empty());
 
+        UUID expected = UUID.randomUUID();
         ProductEntity productEntity = new ProductEntity();
-        productEntity.setId(UUID.randomUUID());
-        productEntity.setArticle(article);
-        productEntity.setName(name);
-        productEntity.setDescription(description);
-        productEntity.setCategories(categories);
-        productEntity.setPrice(price);
-        productEntity.setQuantity(quantity);
+        productEntity.setId(expected);
 
-        Mockito.when(productRepository.save(Mockito.any(ProductEntity.class))).thenReturn(productEntity);
+        when(productRepositoryMock.save(any())).thenReturn(productEntity);
 
-        UUID productId = productService.createProduct(productDto);
+        UUID actual = productServiceUT.createProduct(productDto);
+        assertEquals(expected, actual);
 
-        Assertions.assertNotNull(productId);
-        Assertions.assertEquals(article, productEntity.getArticle());
-        Assertions.assertEquals(name, productEntity.getName());
-        Assertions.assertEquals(description, productEntity.getDescription());
-        Assertions.assertEquals(categories, productEntity.getCategories());
-        Assertions.assertEquals(price, productEntity.getPrice());
-        Assertions.assertEquals(quantity, productEntity.getQuantity());
+        verify(productRepositoryMock).findByArticle(expectedArticle);
     }
 
     @Test
     public void getProductByIdTest_WhenProductExists_ReturnsProductDto() {
-        UUID productId = UUID.randomUUID();
-        String article = "666666";
-        String name = "Яблоко";
-        String description = "Красная спелая";
-        Categories categories = Categories.FRUIT;
-        double price = 50.00;
-        Integer quantity = 25;
+        UUID expectedProductId = UUID.randomUUID();
+        String expectedArticle = "666666";
+        String expectedName = "Яблоко";
+        String expectedDescription = "Красная спелая";
+        Categories expectedCategories = Categories.FRUIT;
+        double expectedPrice = 50.00;
+        Integer expectedQuantity = 25;
 
         ProductEntity productEntity = new ProductEntity();
-        productEntity.setId(productId);
-        productEntity.setArticle(article);
-        productEntity.setName(name);
-        productEntity.setDescription(description);
-        productEntity.setCategories(categories);
-        productEntity.setPrice(price);
-        productEntity.setQuantity(quantity);
+        productEntity.setId(expectedProductId);
+        productEntity.setArticle(expectedArticle);
+        productEntity.setName(expectedName);
+        productEntity.setDescription(expectedDescription);
+        productEntity.setCategories(expectedCategories);
+        productEntity.setPrice(expectedPrice);
+        productEntity.setQuantity(expectedQuantity);
 
-        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.of(productEntity));
+        when(productRepositoryMock.findById(expectedProductId)).thenReturn(Optional.of(productEntity));
 
-        ProductDto productDto = productService.getProductById(productId);
+        ProductDto actual = productServiceUT.getProductById(expectedProductId);
 
-        Assertions.assertNotNull(productDto);
-        Assertions.assertEquals(productId, productDto.getId());
-        Assertions.assertEquals(article, productDto.getArticle());
-        Assertions.assertEquals(name, productDto.getName());
-        Assertions.assertEquals(description, productDto.getDescription());
-        Assertions.assertEquals(categories, productDto.getCategories());
-        Assertions.assertEquals(price, productDto.getPrice());
-        Assertions.assertEquals(quantity, productDto.getQuantity());
-
-
+        assertNotNull(actual);
+        assertEquals(expectedProductId, actual.getId());
+        assertEquals(expectedArticle, actual.getArticle());
+        assertEquals(expectedName, actual.getName());
+        assertEquals(expectedDescription, actual.getDescription());
+        assertEquals(expectedCategories, actual.getCategories());
+        assertEquals(expectedPrice, actual.getPrice());
+        assertEquals(expectedQuantity, actual.getQuantity());
     }
 
     @Test
     public void getProductByIdTest_WhenProductDoesNotExist_ThrowsProductNotFoundException() {
-        UUID productId = UUID.randomUUID();
+        when(productRepositoryMock.findById(any())).thenReturn(Optional.empty());
 
-        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.empty());
-
-        Assertions.assertThrows(ProductNotFoundException.class, () -> productService.getProductById(productId));
+        assertThrows(ProductNotFoundException.class, () -> productServiceUT.getProductById(UUID.randomUUID()),
+                "Ожидалось ProductNotFoundException, но он не сработал");
     }
 
     @Test
     public void updateProductTest_WhenProductExists_ReturnsProductId() {
-        UUID productId = UUID.randomUUID();
-        String article = "123456";
-        String name = "Манго";
-        String description = "Спелый";
-        Categories categories = Categories.FRUIT;
-        double price = 20.00;
-        int quantity = 15;
+        UUID expectedProductId = UUID.randomUUID();
+        String expectedArticle = "123456";
+        String expectedName = "Манго";
+        String expectedDescription = "Спелый";
+        Categories expectedCategories = Categories.FRUIT;
+        double expectedPrice = 20.00;
+        int expectedQuantity = 15;
 
         ProductDto productDto = ProductDto.builder()
-                .article(article)
-                .name(name)
-                .description(description)
-                .categories(categories)
-                .price(price)
-                .quantity(quantity)
+                .article(expectedArticle)
+                .name(expectedName)
+                .description(expectedDescription)
+                .categories(expectedCategories)
+                .price(expectedPrice)
+                .quantity(expectedQuantity)
                 .build();
 
         ProductEntity productEntity = new ProductEntity();
-        productEntity.setId(productId);
+        productEntity.setId(expectedProductId);
         productEntity.setArticle("654321");
         productEntity.setName("Слива");
         productEntity.setDescription("Зеленый");
@@ -160,37 +149,31 @@ public class ProductServiceImplTest {
         productEntity.setPrice(25.00);
         productEntity.setQuantity(25);
 
-        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.of(productEntity));
-        Mockito.when(productRepository.isArticleExists(article)).thenReturn(false);
-        Mockito.when(productRepository.save(Mockito.any(ProductEntity.class))).thenReturn(productEntity);
+        when(productRepositoryMock.findById(expectedProductId)).thenReturn(Optional.of(productEntity));
+        when(productRepositoryMock.isArticleExists(expectedArticle)).thenReturn(false);
 
-        UUID updatedProductId = productService.updateProduct(productId, productDto);
+        ArgumentCaptor<ProductEntity> productEntityCaptor = ArgumentCaptor.forClass(ProductEntity.class);
+        when(productRepositoryMock.save(productEntityCaptor.capture())).thenReturn(productEntity);
 
-        Assertions.assertEquals(productId, updatedProductId);
-        Assertions.assertEquals(article, productEntity.getArticle());
-        Assertions.assertEquals(name, productEntity.getName());
-        Assertions.assertEquals(description, productEntity.getDescription());
-        Assertions.assertEquals(categories, productEntity.getCategories());
-        Assertions.assertEquals(price, productEntity.getPrice());
-        Assertions.assertEquals(quantity, productEntity.getQuantity());
+        UUID updatedProductId = productServiceUT.updateProduct(expectedProductId, productDto);
 
+        assertEquals(expectedProductId, updatedProductId);
+
+        ProductEntity capturedProductEntity = productEntityCaptor.getValue();
+        assertEquals(expectedArticle, capturedProductEntity.getArticle());
+        assertEquals(expectedName, capturedProductEntity.getName());
+        assertEquals(expectedDescription, capturedProductEntity.getDescription());
+        assertEquals(expectedCategories, capturedProductEntity.getCategories());
+        assertEquals(expectedPrice, capturedProductEntity.getPrice());
+        assertEquals(expectedQuantity, capturedProductEntity.getQuantity());
     }
 
     @Test
     public void updateProductTest_WhenProductDoesNotExist_ThrowsProductNotFoundException() {
-        UUID productId = UUID.randomUUID();
-        ProductDto productDto = ProductDto.builder()
-                .article("1234566")
-                .name("Малина")
-                .description("Красная")
-                .categories(Categories.FRUIT)
-                .price(55.00)
-                .quantity(15)
-                .build();
+        when(productRepositoryMock.findById(any())).thenReturn(Optional.empty());
 
-        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.empty());
-
-        Assertions.assertThrows(ProductNotFoundException.class, () -> productService.updateProduct(productId, productDto));
+        assertThrows(ProductNotFoundException.class, () -> productServiceUT.updateProduct(UUID.randomUUID(), ProductDto.builder().build()),
+                "Ожидалось ProductNotFoundException, но он не сработал");
     }
 
     @Test
@@ -201,64 +184,42 @@ public class ProductServiceImplTest {
 
         ProductDto productDto = ProductDto.builder()
                 .article(newArticle)
-                .name("Тыква")
-                .description("Оранжевая")
-                .categories(Categories.VEGETABLES)
-                .price(60.00)
-                .quantity(44)
                 .build();
 
         ProductEntity existingProduct = new ProductEntity();
         existingProduct.setId(productId);
         existingProduct.setArticle(existingArticle);
-        existingProduct.setName("Тыква");
-        existingProduct.setDescription("Оранжевая");
-        existingProduct.setCategories(Categories.VEGETABLES);
-        existingProduct.setPrice(60.00);
-        existingProduct.setQuantity(44);
 
-        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
-        Mockito.when(productRepository.isArticleExists(newArticle)).thenReturn(true);
+        when(productRepositoryMock.findById(productId)).thenReturn(Optional.of(existingProduct));
+        when(productRepositoryMock.isArticleExists(newArticle)).thenReturn(true);
 
-        Assertions.assertThrows(ArticleAlreadyExistsException.class, () -> productService.updateProduct(productId, productDto));
+        assertThrows(ArticleAlreadyExistsException.class, () -> productServiceUT.updateProduct(productId, productDto),
+                "Ожидалось ArticleAlreadyExistsException, но он не сработал");
     }
 
     @Test
     public void updateProductTest_WhenQuantityChanges_SetsLastQuantityChange() {
         UUID productId = UUID.randomUUID();
-        String article = "123456";
-        String name = "Банан";
-        String description = "Желтый";
-        Categories categories = Categories.FRUIT;
-        double price = 50.0;
+        String article = "555555";
         int oldQuantity = 15;
         int newQuantity = 18;
 
         ProductDto productDto = ProductDto.builder()
                 .article(article)
-                .name(name)
-                .description(description)
-                .categories(categories)
-                .price(price)
                 .quantity(newQuantity)
                 .build();
 
         ProductEntity existingProduct = new ProductEntity();
         existingProduct.setId(productId);
-        existingProduct.setArticle(article);
-        existingProduct.setName(name);
-        existingProduct.setDescription(description);
-        existingProduct.setCategories(categories);
-        existingProduct.setPrice(price);
         existingProduct.setQuantity(oldQuantity);
 
-        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
-        Mockito.when(productRepository.isArticleExists(article)).thenReturn(false);
-        Mockito.when(productRepository.save(Mockito.any(ProductEntity.class))).thenReturn(existingProduct);
+        when(productRepositoryMock.findById(productId)).thenReturn(Optional.of(existingProduct));
+        when(productRepositoryMock.isArticleExists(article)).thenReturn(false);
+        when(productRepositoryMock.save(Mockito.any(ProductEntity.class))).thenReturn(existingProduct);
 
-        productService.updateProduct(productId, productDto);
+        productServiceUT.updateProduct(productId, productDto);
 
-        Assertions.assertNotNull(existingProduct.getLastQuantityChange());
+        assertNotNull(existingProduct.getLastQuantityChange());
         Assertions.assertNotEquals(existingProduct.getLastQuantityChange(), existingProduct.getCreatedAt());
     }
 
@@ -268,19 +229,13 @@ public class ProductServiceImplTest {
 
         ProductEntity product = new ProductEntity();
         product.setId(productId);
-        product.setArticle("666666");
-        product.setName("Яблоко");
-        product.setDescription("Красный");
-        product.setCategories(Categories.FRUIT);
-        product.setPrice(50.00);
-        product.setQuantity(30);
 
-        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+        when(productRepositoryMock.findById(productId)).thenReturn(Optional.of(product));
 
-        productService.deleteProduct(productId);
+        productServiceUT.deleteProduct(productId);
 
-        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.empty());
-        Optional<ProductEntity> deletedProduct = productRepository.findById(productId);
+        when(productRepositoryMock.findById(productId)).thenReturn(Optional.empty());
+        Optional<ProductEntity> deletedProduct = productRepositoryMock.findById(productId);
 
         Assertions.assertTrue(deletedProduct.isEmpty());
     }
@@ -289,11 +244,12 @@ public class ProductServiceImplTest {
     public void deleteProductTest_WhenProductDoesNotExist_ThrowsProductNotFoundException() {
         UUID productId = UUID.randomUUID();
 
-        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.empty());
+        when(productRepositoryMock.findById(productId)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(ProductNotFoundException.class, () -> productService.deleteProduct(productId));
+        assertThrows(ProductNotFoundException.class, () -> productServiceUT.deleteProduct(productId),
+                "Ожидалось ProductNotFoundException, но он не сработал");
 
-        Mockito.verify(productRepository, Mockito.never()).deleteById(productId);
+        Mockito.verify(productRepositoryMock, Mockito.never()).deleteById(productId);
     }
 
     @Test
@@ -302,32 +258,20 @@ public class ProductServiceImplTest {
 
         ProductEntity product1 = ProductEntity.builder()
                 .id(UUID.randomUUID())
-                .article("123456")
-                .name("Яблоко")
-                .description("Красное")
-                .categories(Categories.FRUIT)
-                .price(50.00)
-                .quantity(25)
                 .build();
 
         ProductEntity product2 = ProductEntity.builder()
                 .id(UUID.randomUUID())
-                .article("12345678")
-                .name("Банан")
-                .description("Желтый")
-                .categories(Categories.FRUIT)
-                .price(55.00)
-                .quantity(20)
                 .build();
 
         List<ProductEntity> productEntities = Arrays.asList(product1, product2);
         Page<ProductEntity> productEntityPage = new PageImpl<>(productEntities, pageable, productEntities.size());
 
-        Mockito.when(productRepository.findAll(pageable)).thenReturn(productEntityPage);
+        when(productRepositoryMock.findAll(pageable)).thenReturn(productEntityPage);
 
-        Page<ProductDto> productDtoPage = productService.getAllProducts(pageable);
+        Page<ProductDto> productDtoPage = productServiceUT.getAllProducts(pageable);
 
-        Assertions.assertNotNull(productDtoPage);
-        Assertions.assertEquals(productEntities.size(), productDtoPage.getSize());
+        assertNotNull(productDtoPage);
+        assertEquals(productEntities.size(), productDtoPage.getSize());
     }
 }
