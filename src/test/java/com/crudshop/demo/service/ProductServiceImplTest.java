@@ -5,8 +5,8 @@ import com.crudshop.demo.entity.Categories;
 import com.crudshop.demo.entity.ProductEntity;
 import com.crudshop.demo.exception.ArticleAlreadyExistsException;
 import com.crudshop.demo.exception.ProductNotFoundException;
-import com.crudshop.demo.motherObject.ProductDtoBuilder;
-import com.crudshop.demo.motherObject.ProductEntityBuilder;
+import com.crudshop.demo.motherobject.ProductDtoBuilder;
+import com.crudshop.demo.motherobject.ProductEntityBuilder;
 import com.crudshop.demo.repository.ProductRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -240,7 +240,7 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    public void getAllProductsTest_ReturnsProductDtoPage() {
+        public void getAllProductsTest_ReturnsProductDtoPage() {
         Pageable pageable = Pageable.ofSize(2).withPage(0);
 
         ProductEntity product1 = ProductEntity.builder()
