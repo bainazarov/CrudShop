@@ -1,4 +1,4 @@
-package com.crudshop.demo.motherObject;
+package com.crudshop.demo.motherobject;
 
 import com.crudshop.demo.entity.Categories;
 import com.crudshop.demo.entity.ProductEntity;
@@ -6,13 +6,15 @@ import com.crudshop.demo.entity.ProductEntity;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static com.crudshop.demo.entity.Categories.FRUIT;
+
 public class ProductEntityBuilder {
 
     public static final UUID DEFAULT_ID = UUID.randomUUID();
     public static final String DEFAULT_ARTICLE = "1234567";
     public static final String DEFAULT_NAME = "Яблоко";
     public static final String DEFAULT_DESCRIPTION = "Круглое красное";
-    public static final Categories DEFAULT_CATEGORIES = Categories.FRUIT;
+    public static final Categories DEFAULT_CATEGORIES = FRUIT;
     public static final double DEFAULT_PRICE = 50.00;
     public static final Integer DEFAULT_QUANTITY = 15;
     public static final LocalDateTime DEFAULT_LAST_QUANTITY_CHANGE = LocalDateTime.now();
