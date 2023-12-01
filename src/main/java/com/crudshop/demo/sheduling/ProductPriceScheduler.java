@@ -24,7 +24,7 @@ public class ProductPriceScheduler {
     }
 
     @Scheduled(fixedRateString = "${app.scheduling.period}")
-    public void increaseProductPrice() {
+    public void increaseProductPrice() throws InterruptedException {
         List<ProductEntity> products = productRepository.findAll();
 
         products.forEach(product -> {
