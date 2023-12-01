@@ -41,4 +41,10 @@ public interface ProductController {
     @Operation(summary = "Получить все продукты")
     List<GetProductResponse> findAll(@RequestParam(defaultValue = "0") final int page,
                                      @RequestParam(defaultValue = "10") final int size);
+
+    @GetMapping("/search")
+    List<GetProductResponse> searchProducts(@RequestParam(required = false) final String name,
+                                            @RequestParam(required = false) final Integer quantity,
+                                            @RequestParam(required = false) final Double price,
+                                            @RequestParam(required = false) final Boolean isAvailable);
 }

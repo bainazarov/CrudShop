@@ -11,8 +11,9 @@ public class UpdateProductRequestBuilder {
     public static final String DEFAULT_NAME = "Яблоко";
     public static final String DEFAULT_DESCRIPTION = "Круглое красное";
     public static final Categories DEFAULT_CATEGORIES = FRUIT;
-    public static final double DEFAULT_PRICE = 50.00;
+    public static final Double DEFAULT_PRICE = 50.00;
     public static final Integer DEFAULT_QUANTITY = 15;
+    public static final Boolean DEFAULT_IS_AVAILABLE = true;
 
 
     private String article = DEFAULT_ARTICLE;
@@ -21,6 +22,7 @@ public class UpdateProductRequestBuilder {
     private Categories categories = DEFAULT_CATEGORIES;
     private double price = DEFAULT_PRICE;
     private Integer quantity = DEFAULT_QUANTITY;
+    private Boolean isAvailable = DEFAULT_IS_AVAILABLE;
 
     private UpdateProductRequestBuilder() {
     }
@@ -50,13 +52,18 @@ public class UpdateProductRequestBuilder {
         return this;
     }
 
-    public UpdateProductRequestBuilder withPrice(double price) {
+    public UpdateProductRequestBuilder withPrice(Double price) {
         this.price = price;
         return this;
     }
 
     public UpdateProductRequestBuilder withQuantity(Integer quantity) {
         this.quantity = quantity;
+        return this;
+    }
+
+    public UpdateProductRequestBuilder withIsAvailable(Boolean isAvailable) {
+        this.isAvailable = isAvailable;
         return this;
     }
 
@@ -68,6 +75,7 @@ public class UpdateProductRequestBuilder {
                 .categories(categories)
                 .price(price)
                 .quantity(quantity)
+                .isAvailable(isAvailable)
                 .build();
     }
 

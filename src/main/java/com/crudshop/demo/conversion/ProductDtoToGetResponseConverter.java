@@ -17,6 +17,7 @@ public class ProductDtoToGetResponseConverter implements Converter<ProductDto, G
                 .categories(source.getCategories())
                 .price(source.getPrice())
                 .quantity(source.getQuantity())
+                .isAvailable(source.getIsAvailable())
                 .lastQuantityChange(source.getLastQuantityChange())
                 .createdAt(source.getCreatedAt())
                 .build();

@@ -22,9 +22,11 @@ public class GetProductResponse {
 
     private Categories categories;
 
-    private double price;
+    private Double price;
 
     private Integer quantity;
+
+    private Boolean isAvailable;
 
     private LocalDateTime lastQuantityChange;
 

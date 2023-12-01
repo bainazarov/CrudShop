@@ -47,10 +47,13 @@ public class ProductEntity {
     private Categories categories;
 
     @Column(name = "price", nullable = false)
-    private double price;
+    private Double price;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
+
+    @Column(name = "is_available", columnDefinition = "boolean default true")
+    private Boolean isAvailable;
 
     @CreationTimestamp
     @Column(name = "last_quantity_change", nullable = false)

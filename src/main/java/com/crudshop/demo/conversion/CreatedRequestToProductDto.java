@@ -16,6 +16,7 @@ public class CreatedRequestToProductDto implements Converter<CreateProductReques
                 .categories(source.getCategories())
                 .price(source.getPrice())
                 .quantity(source.getQuantity())
+                .isAvailable(source.getIsAvailable())
                 .build();
     }
 }

@@ -20,8 +20,10 @@ public class UpdateProductRequest {
     private Categories categories;
 
     @Positive(message = "Price should be at least 0 or higher")
-    private double price;
+    private Double price;
 
     private Integer quantity;
+
+    private Boolean isAvailable;
 
 }
