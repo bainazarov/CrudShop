@@ -43,6 +43,7 @@ public interface ProductController {
                                      @RequestParam(defaultValue = "10") final int size);
 
     @GetMapping("/search")
+    @Operation(summary = "Отфильтровать продукты по запросу")
     List<GetProductResponse> searchProducts(@RequestParam(required = false) final String name,
                                             @RequestParam(required = false) final Integer quantity,
                                             @RequestParam(required = false) final Double price,
