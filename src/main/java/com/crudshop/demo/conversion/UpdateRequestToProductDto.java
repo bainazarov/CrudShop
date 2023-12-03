@@ -16,6 +16,7 @@ public class UpdateRequestToProductDto implements Converter<UpdateProductRequest
                 .categories(source.getCategories())
                 .price(source.getPrice())
                 .quantity(source.getQuantity())
+                .isAvailable(source.getIsAvailable())
                 .build();
     }
 }

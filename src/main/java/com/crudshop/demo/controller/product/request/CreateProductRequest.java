@@ -22,8 +22,10 @@ public class CreateProductRequest {
     private Categories categories;
 
     @Positive(message = "Price should be at least 0 or higher")
-    private double price;
+    private Double price;
 
     @NotNull(message = "Quantity can not be null")
     private Integer quantity;
+
+    private Boolean isAvailable;
 }

@@ -25,9 +25,11 @@ public class ProductDto {
     @Nullable
     Categories categories;
 
-    double price;
+    Double price;
 
     Integer quantity;
+
+    Boolean isAvailable;
 
     LocalDateTime lastQuantityChange;
 

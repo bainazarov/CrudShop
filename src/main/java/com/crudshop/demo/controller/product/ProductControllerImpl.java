@@ -4,6 +4,7 @@ import com.crudshop.demo.controller.product.request.CreateProductRequest;
 import com.crudshop.demo.controller.product.request.UpdateProductRequest;
 import com.crudshop.demo.controller.product.response.GetProductResponse;
 import com.crudshop.demo.dto.ProductDto;
+import com.crudshop.demo.dto.ProductFilterDto;
 import com.crudshop.demo.exception.ProductNotFoundException;
 import com.crudshop.demo.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -64,6 +66,24 @@ public class ProductControllerImpl implements ProductController {
 
         return productPage.getContent().stream()
                 .map(product -> conversionService.convert(product, GetProductResponse.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GetProductResponse> searchProducts(@RequestParam(required = false) final String name,
+                                                   @RequestParam(required = false) final Integer quantity,
+                                                   @RequestParam(required = false) final Double price,
+                                                   @RequestParam(required = false) final Boolean isAvailable) {
+        final ProductFilterDto filter = ProductFilterDto.builder()
+                .name(name)
+                .price(price)
+                .quantity(quantity)
+                .isAvailable(isAvailable)
+                .build();
+        final List<ProductDto> products = productService.searchProducts(filter);
+
+        return products.stream()
+                .map(productDto -> conversionService.convert(productDto, GetProductResponse.class))
                 .collect(Collectors.toList());
     }
 }
