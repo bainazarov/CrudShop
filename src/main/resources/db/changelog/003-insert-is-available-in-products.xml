@@ -10,6 +10,7 @@
         </preConditions>
         <addColumn tableName="products">
             <column name="is_available" type="boolean" defaultValueBoolean="true" remarks="Доступность продукта">
+                <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
