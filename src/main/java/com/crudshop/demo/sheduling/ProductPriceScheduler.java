@@ -2,10 +2,8 @@ package com.crudshop.demo.sheduling;
 
 import com.crudshop.demo.entity.ProductEntity;
 import com.crudshop.demo.repository.ProductRepository;
-import jakarta.persistence.LockModeType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
