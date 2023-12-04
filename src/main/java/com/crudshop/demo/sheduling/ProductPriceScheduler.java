@@ -12,7 +12,7 @@ import java.util.List;
 
 
 @Component
-@ConditionalOnProperty(name = "app.scheduling.enabled", matchIfMissing = true)
+@ConditionalOnProperty(name = "app.scheduling.enabled")
 public class ProductPriceScheduler {
 
     private final ProductRepository productRepository;

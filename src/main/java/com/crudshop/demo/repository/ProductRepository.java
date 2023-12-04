@@ -13,9 +13,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface ProductRepository extends JpaRepository<ProductEntity, UUID>, JpaSpecificationExecutor<ProductEntity>{
+public interface ProductRepository extends JpaRepository<ProductEntity, UUID>, JpaSpecificationExecutor<ProductEntity> {
     Optional<ProductEntity> findByArticle(String article);
 
     @Query("select case when (count(p) > 0) then true else false end from ProductEntity p where p.article = :article")
     boolean isArticleExists(String article);
+
+    @Lock(LockModeType.PESSIMISTIC_READ)
+    List<ProductEntity> findAll();
 }
