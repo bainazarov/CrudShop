@@ -6,7 +6,7 @@ import com.crudshop.demo.controller.product.response.GetProductResponse;
 import com.crudshop.demo.dto.ProductDto;
 import com.crudshop.demo.dto.ProductFilterDto;
 import com.crudshop.demo.exception.ProductNotFoundException;
-import com.crudshop.demo.service.ProductService;
+import com.crudshop.demo.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
@@ -81,6 +81,8 @@ public class ProductControllerImpl implements ProductController {
                 .isAvailable(isAvailable)
                 .build();
         final List<ProductDto> products = productService.searchProducts(filter);
+
+        productService.saveProductsToXlsx(products);
 
         return products.stream()
                 .map(productDto -> conversionService.convert(productDto, GetProductResponse.class))

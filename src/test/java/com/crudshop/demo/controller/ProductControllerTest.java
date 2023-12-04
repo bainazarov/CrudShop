@@ -7,7 +7,7 @@ import com.crudshop.demo.dto.ProductDto;
 import com.crudshop.demo.motherobject.CreateProductRequestBuilder;
 import com.crudshop.demo.motherobject.ProductDtoBuilder;
 import com.crudshop.demo.motherobject.UpdateProductRequestBuilder;
-import com.crudshop.demo.service.ProductService;
+import com.crudshop.demo.service.product.ProductService;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
