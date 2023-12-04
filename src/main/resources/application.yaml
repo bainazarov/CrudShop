@@ -11,7 +11,6 @@ spring:
     password: baynazarow2971
 
   jpa:
-    database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
 
   liquibase:
