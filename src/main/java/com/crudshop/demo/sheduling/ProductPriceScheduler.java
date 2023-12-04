@@ -2,16 +2,19 @@ package com.crudshop.demo.sheduling;
 
 import com.crudshop.demo.entity.ProductEntity;
 import com.crudshop.demo.repository.ProductRepository;
+import jakarta.persistence.LockModeType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 
 @Component
-@ConditionalOnProperty(name = "app.scheduling.enabled")
+@ConditionalOnProperty(name = "app.scheduling.enabled", matchIfMissing = true)
 public class ProductPriceScheduler {
 
     private final ProductRepository productRepository;
@@ -24,6 +27,7 @@ public class ProductPriceScheduler {
     }
 
     @Scheduled(fixedRateString = "${app.scheduling.period}")
+    @Transactional
     public void increaseProductPrice() throws InterruptedException {
         List<ProductEntity> products = productRepository.findAll();
 
@@ -32,7 +36,7 @@ public class ProductPriceScheduler {
             double newPrice = currentPrice * (1 + (priceIncreasePercentage / 100));
             product.setPrice(newPrice);
         });
-
+        Thread.sleep(30000);
         productRepository.saveAll(products);
     }
 }
