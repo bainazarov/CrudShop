@@ -23,7 +23,7 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public List<String> getReportFileNames() {
         final List<String> fileNames = new ArrayList<>();
-        final File reportsFolder = new File("src/main/resources/reports");
+        final File reportsFolder = new File(FOLDER_PATH);
         if (reportsFolder.exists() && reportsFolder.isDirectory()) {
             File[] files = reportsFolder.listFiles();
             if (files != null) {
