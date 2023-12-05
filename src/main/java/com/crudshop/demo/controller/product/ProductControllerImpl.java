@@ -8,6 +8,7 @@ import com.crudshop.demo.dto.ProductFilterDto;
 import com.crudshop.demo.exception.ProductNotFoundException;
 import com.crudshop.demo.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class ProductControllerImpl implements ProductController {
 
     private final ProductService productService;
@@ -30,6 +32,8 @@ public class ProductControllerImpl implements ProductController {
     @Override
     public UUID createProduct(final CreateProductRequest request) {
         final ProductDto productDto = conversionService.convert(request, ProductDto.class);
+        log.info("Создали продукт с id " + productDto.getId());
+
 
         return productService.createProduct(productDto);
     }
@@ -37,12 +41,15 @@ public class ProductControllerImpl implements ProductController {
     @Override
     public GetProductResponse getProductById(final UUID id) {
         final ProductDto productDto = productService.getProductById(id);
+        log.info("Получили продукт с id " + id);
 
         return conversionService.convert(productDto, GetProductResponse.class);
     }
 
     @Override
     public UUID updateProduct(final UUID id, final UpdateProductRequest request) {
+        log.info("Обновили продукт с id " + id);
+
         return productService.updateProduct(id, conversionService.convert(request, ProductDto.class));
     }
 
@@ -53,6 +60,7 @@ public class ProductControllerImpl implements ProductController {
         } catch (ProductNotFoundException e) {
             return ResponseEntity.noContent().build();
         }
+        log.info("Удалили продукт с id " + id);
 
         return ResponseEntity.ok().build();
     }
@@ -61,6 +69,7 @@ public class ProductControllerImpl implements ProductController {
     public List<GetProductResponse> findAll(int page, int size) {
         final Pageable pageable = PageRequest.of(page, size);
         final Page<ProductDto> productPage = productService.getAllProducts(pageable);
+        log.info("Получили лист продуктов страница " + page + " количество" + size);
 
         return productPage.getContent().stream()
                 .map(product -> conversionService.convert(product, GetProductResponse.class))
@@ -81,6 +90,7 @@ public class ProductControllerImpl implements ProductController {
         final List<ProductDto> products = productService.searchProducts(filter);
 
         productService.saveProductsToXlsx(products);
+        log.info("Отфильтровали продукты по данным параметрам " + filter);
 
         return products.stream()
                 .map(productDto -> conversionService.convert(productDto, GetProductResponse.class))

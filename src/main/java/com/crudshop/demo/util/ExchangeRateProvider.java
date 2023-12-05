@@ -20,6 +20,7 @@ public class ExchangeRateProvider {
             return exchangeRate.getExchangeRate();
         } catch (IOException e) {
             log.error("Ошибка при чтении файла ");
+
             return DEFAULT_COURSE;
         }
     }

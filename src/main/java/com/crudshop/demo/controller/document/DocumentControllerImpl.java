@@ -3,6 +3,7 @@ package com.crudshop.demo.controller.document;
 import com.crudshop.demo.exception.DocumentNotFoundException;
 import com.crudshop.demo.service.document.DocumentService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpEntity;
@@ -22,6 +23,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class DocumentControllerImpl implements DocumentController {
     private final DocumentService documentService;
 
@@ -34,6 +36,7 @@ public class DocumentControllerImpl implements DocumentController {
     public ResponseEntity<String> uploadFile(@RequestParam("file") final MultipartFile file) {
         try {
             final String result = documentService.uploadFile(file);
+            log.info("Загрузили файл с названием " + file);
 
             return ResponseEntity.ok().body(result);
         } catch (IOException e) {
@@ -55,6 +58,8 @@ public class DocumentControllerImpl implements DocumentController {
         final HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.valueOf("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
         header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
+
+        log.info("Загрузили файл с названием " + fileName);
 
         return new HttpEntity<>(new ByteArrayResource(resource.getContentAsByteArray()), header);
 
