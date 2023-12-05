@@ -24,7 +24,7 @@ public interface DocumentController {
     @Operation(summary = "Загрузить файл в каталог resources/reports")
     ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file);
 
-    @GetMapping(value = "/download", produces = {})
+    @GetMapping(value = "/download")
     @Operation(summary = "Скачивание файла")
     HttpEntity<ByteArrayResource> downloadFile(@RequestParam(required = true) String fileName) throws IOException;
 }

@@ -31,9 +31,9 @@ public class DocumentControllerImpl implements DocumentController {
     }
 
     @Override
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> uploadFile(@RequestParam("file") final MultipartFile file) {
         try {
-            String result = documentService.uploadFile(file);
+            final String result = documentService.uploadFile(file);
 
             return ResponseEntity.ok().body(result);
         } catch (IOException e) {
@@ -43,8 +43,8 @@ public class DocumentControllerImpl implements DocumentController {
     }
 
     @Override
-    public HttpEntity<ByteArrayResource> downloadFile(@RequestParam(required = true) String fileName) throws IOException {
-        File file = new File("src/main/resources/reports/" + fileName);
+    public HttpEntity<ByteArrayResource> downloadFile(@RequestParam(required = true) final String fileName) throws IOException {
+        final File file = new File("src/main/resources/reports/" + fileName);
         InputStreamResource resource = null;
         try {
             resource = new InputStreamResource(new FileInputStream(file));
@@ -52,7 +52,7 @@ public class DocumentControllerImpl implements DocumentController {
             throw new DocumentNotFoundException("Файл с таким названием " + fileName + " не существует");
         }
 
-        HttpHeaders header = new HttpHeaders();
+        final HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.valueOf("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
         header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
 
