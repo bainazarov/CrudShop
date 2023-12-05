@@ -42,7 +42,7 @@ public class ProductControllerImpl implements ProductController {
         final ProductDto productDto = productService.getProductById(id);
         final GetProductResponse getProductResponse = conversionService.convert(productDto, GetProductResponse.class);
 
-        double priceInDollars = 0;
+        double priceInDollars;
         try {
             priceInDollars = convertPriceToDollar.convertPriceToDollars(getProductResponse.getPrice());
         } catch (IOException e) {
