@@ -43,9 +43,9 @@ public class DocumentControllerImpl implements DocumentController {
     }
 
     @Override
-    public HttpEntity<ByteArrayResource> downloadFile(@RequestParam(required = true) final String fileName) throws IOException {
+    public HttpEntity<ByteArrayResource> downloadFile(@RequestParam final String fileName) throws IOException {
         final File file = new File("src/main/resources/reports/" + fileName);
-        InputStreamResource resource = null;
+        InputStreamResource resource;
         try {
             resource = new InputStreamResource(new FileInputStream(file));
         } catch (FileNotFoundException e) {
