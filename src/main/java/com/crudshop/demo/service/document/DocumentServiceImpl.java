@@ -18,6 +18,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class DocumentServiceImpl implements DocumentService {
+    private final String FOLDER_PATH = "src/main/resources/reports";
 
     @Override
     public List<String> getReportFileNames() {
@@ -38,7 +39,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public String uploadFile(MultipartFile file) throws IOException {
-        Path path = Paths.get("src/main/resources/reports");
+        Path path = Paths.get(FOLDER_PATH);
         if (!Files.exists(path)) {
             Files.createDirectories(path);
         }
