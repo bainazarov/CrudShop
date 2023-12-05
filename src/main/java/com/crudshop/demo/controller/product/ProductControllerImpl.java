@@ -7,7 +7,6 @@ import com.crudshop.demo.dto.ProductDto;
 import com.crudshop.demo.dto.ProductFilterDto;
 import com.crudshop.demo.exception.ProductNotFoundException;
 import com.crudshop.demo.service.product.ProductService;
-import com.crudshop.demo.util.ConvertPriceToDollar;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
@@ -17,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -28,7 +26,6 @@ public class ProductControllerImpl implements ProductController {
 
     private final ProductService productService;
     private final ConversionService conversionService;
-    private final ConvertPriceToDollar convertPriceToDollar;
 
     @Override
     public UUID createProduct(final CreateProductRequest request) {
@@ -40,19 +37,9 @@ public class ProductControllerImpl implements ProductController {
     @Override
     public GetProductResponse getProductById(final UUID id) {
         final ProductDto productDto = productService.getProductById(id);
-        final GetProductResponse getProductResponse = conversionService.convert(productDto, GetProductResponse.class);
 
-        double priceInDollars;
-        try {
-            priceInDollars = convertPriceToDollar.convertPriceToDollars(getProductResponse.getPrice());
-        } catch (IOException e) {
-            throw new RuntimeException("Ошибка при конвертации цены: " + id.toString());
-        }
-        getProductResponse.setPrice(priceInDollars);
-
-        return getProductResponse;
+        return conversionService.convert(productDto, GetProductResponse.class);
     }
-
 
     @Override
     public UUID updateProduct(final UUID id, final UpdateProductRequest request) {
