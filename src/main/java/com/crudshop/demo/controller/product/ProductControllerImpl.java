@@ -22,7 +22,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/products")
 @RequiredArgsConstructor
 public class ProductControllerImpl implements ProductController {
 
