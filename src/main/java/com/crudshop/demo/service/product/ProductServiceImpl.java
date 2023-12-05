@@ -1,4 +1,4 @@
-package com.crudshop.demo.service;
+package com.crudshop.demo.service.product;
 
 import com.crudshop.demo.annotation.MeasureExecutionTime;
 import com.crudshop.demo.dto.ProductDto;
@@ -9,12 +9,20 @@ import com.crudshop.demo.exception.ProductNotFoundException;
 import com.crudshop.demo.repository.ProductRepository;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -157,5 +165,43 @@ public class ProductServiceImpl implements ProductService {
                         .createdAt(productEntity.getCreatedAt())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void saveProductsToXlsx(final List<ProductDto> products) {
+        try (final Workbook workbook = new XSSFWorkbook()) {
+            final Sheet sheet = workbook.createSheet("Products");
+            final String[] headers = {"ID", "Article", "Name", "Description", "Categories", "Price", "Quantity", "Is Available", "Last Quantity Change", "Created At"};
+            final Row headerRow = sheet.createRow(0);
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+            }
+
+            int rowNum = 1;
+            for (ProductDto product : products) {
+                final Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(product.getId().toString());
+                row.createCell(1).setCellValue(product.getArticle());
+                row.createCell(2).setCellValue(product.getName());
+                row.createCell(3).setCellValue(product.getDescription());
+                row.createCell(4).setCellValue(String.valueOf(product.getCategories()));
+                row.createCell(5).setCellValue(product.getPrice().toString());
+                row.createCell(6).setCellValue(product.getQuantity().toString());
+                row.createCell(7).setCellValue(product.getIsAvailable().toString());
+                row.createCell(8).setCellValue(product.getLastQuantityChange().toString());
+                row.createCell(9).setCellValue(product.getCreatedAt().toString());
+            }
+
+            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+            final String fileName = "reports_" + LocalDateTime.now().format(formatter) + ".xlsx";
+
+            try (final FileOutputStream outputStream = new FileOutputStream("src/main/resources/reports/" + fileName)) {
+                workbook.write(outputStream);
+
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка при сохранении результата выборки в файл XLSX");
+        }
     }
 }

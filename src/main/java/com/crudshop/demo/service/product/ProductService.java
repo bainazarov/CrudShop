@@ -1,4 +1,4 @@
-package com.crudshop.demo.service;
+package com.crudshop.demo.service.product;
 
 import com.crudshop.demo.annotation.MeasureExecutionTime;
 import com.crudshop.demo.dto.ProductDto;
@@ -25,4 +25,5 @@ public interface ProductService {
 
     List<ProductDto> searchProducts(ProductFilterDto filter);
 
+    void saveProductsToXlsx(List<ProductDto> products);
 }

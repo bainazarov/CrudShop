@@ -8,6 +8,7 @@ import com.crudshop.demo.exception.ProductNotFoundException;
 import com.crudshop.demo.motherobject.ProductDtoBuilder;
 import com.crudshop.demo.motherobject.ProductEntityBuilder;
 import com.crudshop.demo.repository.ProductRepository;
+import com.crudshop.demo.service.product.ProductServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
