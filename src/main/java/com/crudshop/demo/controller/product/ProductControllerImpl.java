@@ -90,7 +90,7 @@ public class ProductControllerImpl implements ProductController {
         final List<ProductDto> products = productService.searchProducts(filter);
 
         productService.saveProductsToXlsx(products);
-        log.info("Отфильтровали продукты по данным параметрам " + filter);
+        log.info("Отфильтровали продукты по заданным параметрам " + filter);
 
         return products.stream()
                 .map(productDto -> conversionService.convert(productDto, GetProductResponse.class))

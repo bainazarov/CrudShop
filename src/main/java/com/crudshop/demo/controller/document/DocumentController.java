@@ -26,5 +26,5 @@ public interface DocumentController {
 
     @GetMapping(value = "/download")
     @Operation(summary = "Скачивание файла")
-    HttpEntity<ByteArrayResource> downloadFile(@RequestParam(required = true) String fileName) throws IOException;
+    HttpEntity<ByteArrayResource> downloadFile(@RequestParam String fileName) throws IOException;
 }
