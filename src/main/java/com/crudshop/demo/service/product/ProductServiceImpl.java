@@ -83,7 +83,7 @@ public class ProductServiceImpl implements ProductService {
         final ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Продукт с таким id не был найден "));
 
-        if (productRepository.isArticleExists(productDto.getArticle())) {
+        if (productRepository.isArticleExists(productDto.getArticle()))  { // добавить проверку на существующий артикул и не отэтой энтити
             throw new ArticleAlreadyExistsException("Продукт с таким артикулом уже существует");
         }
 

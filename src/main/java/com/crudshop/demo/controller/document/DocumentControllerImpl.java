@@ -1,12 +1,11 @@
 package com.crudshop.demo.controller.document;
 
 import com.crudshop.demo.exception.DocumentNotFoundException;
-import com.crudshop.demo.exception.GetContentAsByteException;
 import com.crudshop.demo.service.document.DocumentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -18,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -41,26 +39,21 @@ public class DocumentControllerImpl implements DocumentController {
     }
 
     @Override
-    public HttpEntity<ByteArrayResource> downloadFile(@RequestParam final String fileName) {
-        final File file = new File("src/main/resources/reports/" + fileName);
-        InputStreamResource resource;
+    public HttpEntity<Resource> downloadFile(@RequestParam final String fileName) {
         try {
+            final File file = new File("src/main/resources/reports/" + fileName);
+            InputStreamResource resource;
             resource = new InputStreamResource(new FileInputStream(file));
+
+            final HttpHeaders header = new HttpHeaders();
+            header.setContentType(MediaType.valueOf("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+            header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
+
+            log.info("Загрузили файл с названием " + fileName);
+
+            return new HttpEntity<>(resource, header);
         } catch (FileNotFoundException e) {
             throw new DocumentNotFoundException("Файл с таким названием " + fileName + " не существует");
         }
-
-        final HttpHeaders header = new HttpHeaders();
-        header.setContentType(MediaType.valueOf("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
-        header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
-
-        log.info("Загрузили файл с названием " + fileName);
-
-        try {
-            return new HttpEntity<>(new ByteArrayResource(resource.getContentAsByteArray()), header);
-        } catch (IOException e) {
-            throw new GetContentAsByteException("Ошибка при получении содержимого в виде массива байтов ");
-        }
-
     }
 }

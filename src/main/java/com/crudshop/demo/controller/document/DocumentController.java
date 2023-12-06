@@ -1,7 +1,7 @@
 package com.crudshop.demo.controller.document;
 
 import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,5 +25,5 @@ public interface DocumentController {
 
     @GetMapping(value = "/download")
     @Operation(summary = "Скачивание файла")
-    HttpEntity<ByteArrayResource> downloadFile(@RequestParam final String fileName);
+    HttpEntity<Resource> downloadFile(@RequestParam final String fileName);
 }
