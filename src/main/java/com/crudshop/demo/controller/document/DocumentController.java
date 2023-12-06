@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @RequestMapping("/documents")
@@ -22,9 +21,9 @@ public interface DocumentController {
 
     @PostMapping("/upload")
     @Operation(summary = "Загрузить файл в каталог resources/reports")
-    ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file);
+    ResponseEntity<String> uploadFile(@RequestParam("file") final MultipartFile file);
 
     @GetMapping(value = "/download")
     @Operation(summary = "Скачивание файла")
-    HttpEntity<ByteArrayResource> downloadFile(@RequestParam String fileName) throws IOException;
+    HttpEntity<ByteArrayResource> downloadFile(@RequestParam final String fileName);
 }

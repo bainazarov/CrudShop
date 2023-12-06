@@ -14,9 +14,9 @@ public class ExchangeRateProvider {
 
     public double getExchangeRate() {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            File file = new File("src/main/resources/exchange-rate.json");
-            ExchangeRate exchangeRate = objectMapper.readValue(file, ExchangeRate.class);
+            final ObjectMapper objectMapper = new ObjectMapper();
+            final File file = new File("src/main/resources/exchange-rate.json");
+            final ExchangeRate exchangeRate = objectMapper.readValue(file, ExchangeRate.class);
             return exchangeRate.getExchangeRate();
         } catch (IOException e) {
             log.error("Ошибка при чтении файла ");

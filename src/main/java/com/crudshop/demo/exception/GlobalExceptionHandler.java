@@ -58,4 +58,22 @@ public class GlobalExceptionHandler {
         ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), errorMessage, LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
     }
+
+    @ExceptionHandler(CreatingDirectoryException.class)
+    protected ResponseEntity<ErrorDetails> handleCreatingDirectoryException(CreatingDirectoryException e) {
+        ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
+    }
+
+    @ExceptionHandler(CopyingFileException.class)
+    protected ResponseEntity<ErrorDetails> handleCopyingFileException(CopyingFileException e) {
+        ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
+    }
+
+    @ExceptionHandler(GetContentAsByteException.class)
+    protected ResponseEntity<ErrorDetails> handleGetContentAsByteException(GetContentAsByteException e) {
+        ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
+    }
 }

@@ -1,6 +1,7 @@
 package com.crudshop.demo.controller.document;
 
 import com.crudshop.demo.exception.DocumentNotFoundException;
+import com.crudshop.demo.exception.GetContentAsByteException;
 import com.crudshop.demo.service.document.DocumentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +9,6 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,19 +34,14 @@ public class DocumentControllerImpl implements DocumentController {
 
     @Override
     public ResponseEntity<String> uploadFile(@RequestParam("file") final MultipartFile file) {
-        try {
-            final String result = documentService.uploadFile(file);
-            log.info("Загрузили файл с названием " + file);
+        final String result = documentService.uploadFile(file);
+        log.info("Загрузили файл с названием " + file);
 
-            return ResponseEntity.ok().body(result);
-        } catch (IOException e) {
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка при загрузке файла: " + e.getMessage());
-        }
+        return ResponseEntity.ok().body(result);
     }
 
     @Override
-    public HttpEntity<ByteArrayResource> downloadFile(@RequestParam final String fileName) throws IOException {
+    public HttpEntity<ByteArrayResource> downloadFile(@RequestParam final String fileName) {
         final File file = new File("src/main/resources/reports/" + fileName);
         InputStreamResource resource;
         try {
@@ -61,7 +56,11 @@ public class DocumentControllerImpl implements DocumentController {
 
         log.info("Загрузили файл с названием " + fileName);
 
-        return new HttpEntity<>(new ByteArrayResource(resource.getContentAsByteArray()), header);
+        try {
+            return new HttpEntity<>(new ByteArrayResource(resource.getContentAsByteArray()), header);
+        } catch (IOException e) {
+            throw new GetContentAsByteException("Ошибка при получении содержимого в виде массива байтов ");
+        }
 
     }
 }
