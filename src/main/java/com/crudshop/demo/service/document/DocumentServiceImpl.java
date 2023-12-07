@@ -1,6 +1,9 @@
 package com.crudshop.demo.service.document;
 
+import com.crudshop.demo.exception.CopyingFileException;
+import com.crudshop.demo.exception.CreatingDirectoryException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class DocumentServiceImpl implements DocumentService {
     private final String FOLDER_PATH = "src/main/resources/reports";
@@ -23,7 +27,7 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public List<String> getReportFileNames() {
         final List<String> fileNames = new ArrayList<>();
-        final File reportsFolder = new File("src/main/resources/reports");
+        final File reportsFolder = new File(FOLDER_PATH);
         if (reportsFolder.exists() && reportsFolder.isDirectory()) {
             File[] files = reportsFolder.listFiles();
             if (files != null) {
@@ -38,14 +42,22 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public String uploadFile(MultipartFile file) throws IOException {
-        Path path = Paths.get(FOLDER_PATH);
+    public String uploadFile(final MultipartFile file) {
+        final Path path = Paths.get(FOLDER_PATH);
         if (!Files.exists(path)) {
-            Files.createDirectories(path);
+            try {
+                Files.createDirectories(path);
+            } catch (IOException e) {
+                throw new CreatingDirectoryException("Ошибка при создании дириктории " + path);
+            }
         }
-        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
-        Path filePath = path.resolve(fileName);
-        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        final String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+        final Path filePath = path.resolve(fileName);
+        try {
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new CopyingFileException("Ошибка при копировании файла " + fileName);
+        }
 
         return "Файл успешно загружен: " + fileName;
     }
