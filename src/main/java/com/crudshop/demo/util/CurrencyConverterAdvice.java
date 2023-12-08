@@ -22,7 +22,7 @@ public class CurrencyConverterAdvice implements ResponseBodyAdvice<GetProductRes
         String className = returnType.getContainingClass().toString();
         String methodName = returnType.getMethod().toString();
 
-        return className.contains("ProductControllerImpl") && methodName.contains("getProductById");
+        return className.contains("ProductController") && methodName.contains("getProductById");
     }
 
     @Override

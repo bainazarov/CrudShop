@@ -1,8 +1,10 @@
 package com.crudshop.demo.util;
 
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Value
+@Data
+@NoArgsConstructor
 public class ExchangeRate {
     Double exchangeRate;
 }
