@@ -1,6 +1,7 @@
 package com.crudshop.demo.util;
 
 import com.crudshop.demo.interaction.ExchangeRateClient;
+import com.crudshop.demo.interaction.ExchangeRateClientImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
