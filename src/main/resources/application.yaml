@@ -9,6 +9,10 @@ spring:
     url: jdbc:postgresql://localhost:5432/CrudShop
     username: postgres
     password: baynazarow2971
+  cache:
+    cache-names: exchangeRate
+    caffeine:
+      spec: maximumSize=500, expireAfterAccess=60s
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
@@ -21,8 +25,13 @@ logging:
     root: INFO
     org.springframework: INFO
     com.crudshop.demo: INFO
+    org.springframework.cache: TRACE
 
 app:
   scheduling:
     period: 30000
     priceIncreasePercentage: 10
+
+addressservice:
+  base:
+    url: http://localhost:8080/my-app
