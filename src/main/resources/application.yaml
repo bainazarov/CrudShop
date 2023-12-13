@@ -25,6 +25,7 @@ logging:
     root: INFO
     org.springframework: INFO
     com.crudshop.demo: INFO
+    org.springframework.cache: TRACE
 
 app:
   scheduling:
