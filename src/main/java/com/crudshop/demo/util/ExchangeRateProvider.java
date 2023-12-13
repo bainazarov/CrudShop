@@ -15,7 +15,8 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class ExchangeRateProvider {
-    private final Double DEFAULT_COURSE_RUB = 1.00;
+
+    private final Double DEFAULT_COURSE = 50.00;
     private final ExchangeRateClient exchangeRateClient;
 
 
