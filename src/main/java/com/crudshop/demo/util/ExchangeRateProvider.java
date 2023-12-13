@@ -15,6 +15,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class ExchangeRateProvider {
+
     private final Double DEFAULT_COURSE = 50.00;
     private final ExchangeRateClient exchangeRateClient;
 
@@ -35,7 +36,7 @@ public class ExchangeRateProvider {
         } catch (IOException e) {
             log.error("Ошибка при чтении локального файла ");
 
-            return DEFAULT_COURSE;
+            return DEFAULT_COURSE_RUB;
         }
     }
 

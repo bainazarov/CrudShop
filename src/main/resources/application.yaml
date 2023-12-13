@@ -35,3 +35,7 @@ app:
 addressservice:
   base:
     url: http://localhost:8080/my-app
+
+interaction:
+  rate:
+    stub: false
