@@ -7,6 +7,7 @@ import com.crudshop.demo.entity.ProductEntity;
 import com.crudshop.demo.exception.ArticleAlreadyExistsException;
 import com.crudshop.demo.exception.ProductNotFoundException;
 import com.crudshop.demo.repository.ProductRepository;
+import com.crudshop.demo.util.CurrencyProvider;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final CurrencyProvider currencyProvider;
 
     @Override
     @MeasureExecutionTime

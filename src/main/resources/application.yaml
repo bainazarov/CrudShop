@@ -34,7 +34,7 @@ app:
 
 addressservice:
   base:
-    url: http://localhost:8080/my-app
+    url: http://localhost:8083/my-app
 
 interaction:
   rate:

@@ -1,11 +1,15 @@
 package com.crudshop.demo.interaction;
 
+import com.crudshop.demo.util.Currency;
 import com.crudshop.demo.util.ExchangeRate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.lang.Nullable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -21,15 +25,28 @@ public class ExchangeRateClientImpl implements ExchangeRateClient {
 
     @Cacheable(unless = "#result == null")
     @Override
-    public @Nullable Double getExchangeRate() {
+    public Double getExchangeRate(Currency currency) {
         try {
             log.info("Делаем вызов второго сервиса");
-            ExchangeRate exchangeRate = exchangeRateRestTemplate.getForObject("/exchange", ExchangeRate.class);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+            httpHeaders.set("Currency", currency.name());
 
-            return Optional.ofNullable(exchangeRate).map(ExchangeRate::getExchangeRate).orElse(null);
+            ExchangeRate exchangeRate = exchangeRateRestTemplate.exchange("/exchange", HttpMethod.GET,
+                    new HttpEntity<>(httpHeaders), ExchangeRate.class).getBody();
+            return Optional.ofNullable(exchangeRate).map(rate -> getExchangeRateByCurrency(rate, currency)).orElse(null);
         } catch (Exception e) {
-            log.error("Ошибка получения курса из второго курса" + e.getMessage());
+
+            log.error("Ошибка получения курса из второго сервиса: " + e.getMessage());
             return null;
         }
+    }
+
+    private Double getExchangeRateByCurrency(ExchangeRate exchangeRate, Currency currency) {
+        return switch (currency) {
+            case USD -> exchangeRate.getExchangeRateUSD();
+            case RUB -> exchangeRate.getExchangeRateRUB();
+            case EUR -> exchangeRate.getExchangeRateEUR();
+        };
     }
 }

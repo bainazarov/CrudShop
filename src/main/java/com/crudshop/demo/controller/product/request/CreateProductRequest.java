@@ -19,6 +19,7 @@ public class CreateProductRequest {
 
     private String description;
 
+    @NotNull(message = "Categories can not be null")
     private Categories categories;
 
     @Positive(message = "Price should be at least 0 or higher")

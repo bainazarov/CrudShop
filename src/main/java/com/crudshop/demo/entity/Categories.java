@@ -23,7 +23,7 @@ public enum Categories {
     @JsonCreator
     public static Categories fromName(String name) {
         for (Categories category : Categories.values()) {
-            if (category.name().equals(name)) {
+            if (category.name().equals(name) || category.label.equals(name)) {
                 return category;
             }
         } return null;

@@ -32,7 +32,7 @@ public class ProductControllerImpl implements ProductController {
     @Override
     public UUID createProduct(final CreateProductRequest request) {
         final ProductDto productDto = conversionService.convert(request, ProductDto.class);
-        log.info("Создали продукт с id " + productDto.getId());
+        log.info("Создали продукт с артиклом " + request.getArticle());
 
 
         return productService.createProduct(productDto);
