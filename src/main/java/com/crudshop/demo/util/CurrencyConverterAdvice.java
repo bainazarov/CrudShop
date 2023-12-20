@@ -16,6 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CurrencyConverterAdvice implements ResponseBodyAdvice<GetProductResponse> {
     private final ExchangeRateProvider exchangeRateProvider;
+    private final CurrencyProvider currencyProvider;
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
@@ -30,9 +31,9 @@ public class CurrencyConverterAdvice implements ResponseBodyAdvice<GetProductRes
                                               MediaType selectedContentType,
                                               Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                               ServerHttpRequest request, ServerHttpResponse response) {
-        Double rate = exchangeRateProvider.getExchangeRate();
+        Currency currency = currencyProvider.getCurrency();
+        Double rate = exchangeRateProvider.getExchangeRate(currency);
         Optional.ofNullable(body).ifPresent(b -> b.setPrice(body.getPrice() / rate));
-
         return body;
     }
 }

@@ -5,11 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -21,14 +18,14 @@ public class ExchangeRateClientImpl implements ExchangeRateClient {
 
     @Cacheable(unless = "#result == null")
     @Override
-    public @Nullable Double getExchangeRate() {
+    public ExchangeRate getExchangeRate() {
         try {
             log.info("Делаем вызов второго сервиса");
-            ExchangeRate exchangeRate = exchangeRateRestTemplate.getForObject("/exchange", ExchangeRate.class);
 
-            return Optional.ofNullable(exchangeRate).map(ExchangeRate::getExchangeRate).orElse(null);
+            return exchangeRateRestTemplate.getForObject("/exchange", ExchangeRate.class);
         } catch (Exception e) {
-            log.error("Ошибка получения курса из второго курса" + e.getMessage());
+
+            log.error("Ошибка получения курса из второго сервиса: " + e.getMessage());
             return null;
         }
     }

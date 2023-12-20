@@ -32,10 +32,10 @@ public class ProductControllerImpl implements ProductController {
     @Override
     public UUID createProduct(final CreateProductRequest request) {
         final ProductDto productDto = conversionService.convert(request, ProductDto.class);
-        log.info("Создали продукт с id " + productDto.getId());
+        final UUID createdProductId = productService.createProduct(productDto);
+        log.info("Создали продукт с артиклом " + request.getArticle() + " и id " + createdProductId);
 
-
-        return productService.createProduct(productDto);
+        return createdProductId;
     }
 
     @Override
