@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -32,8 +33,7 @@ public class ProductControllerImpl implements ProductController {
     @Override
     public UUID createProduct(final CreateProductRequest request) {
         final ProductDto productDto = conversionService.convert(request, ProductDto.class);
-        log.info("Создали продукт с артиклом " + request.getArticle());
-
+        log.info("Создали продукт с артиклом и id " + request.getArticle() + Objects.requireNonNull(productDto).getId());
 
         return productService.createProduct(productDto);
     }

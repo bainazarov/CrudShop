@@ -42,7 +42,8 @@ public class ExchangeRateProvider {
 
     private @Nullable Double getExchangeRateFromService(Currency currency) {
         log.info("Получаем курс из второго сервиса или из кэша");
-        return exchangeRateClient.getExchangeRate(currency);
+        return Optional.ofNullable(exchangeRateClient.getExchangeRate())
+                .map(rate -> getExchangeRateByCurrency(rate, currency)).orElse(null);
     }
 
     private Double getExchangeRateByCurrency(ExchangeRate exchangeRate, Currency currency) {
