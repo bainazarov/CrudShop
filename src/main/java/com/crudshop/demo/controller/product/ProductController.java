@@ -25,7 +25,7 @@ public interface ProductController {
 
     @PostMapping
     @Operation(summary = "Регистрация продукта")
-    UUID createProduct(@RequestBody @Valid final CreateProductRequest createProductRequest);
+    UUID createProduct(@RequestBody @Valid final CreateProductRequest request);
 
     @GetMapping("/{id}")
     @Operation(summary = "Получить продукт по ID")

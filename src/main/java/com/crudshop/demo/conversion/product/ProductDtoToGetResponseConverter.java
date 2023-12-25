@@ -1,15 +1,16 @@
-package com.crudshop.demo.conversion;
-import com.crudshop.demo.controller.product.request.CreateProductRequest;
+package com.crudshop.demo.conversion.product;
+
+import com.crudshop.demo.controller.product.response.GetProductResponse;
 import com.crudshop.demo.dto.ProductDto;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
-
 @Component
-public class CreatedRequestToProductDto implements Converter<CreateProductRequest, ProductDto> {
+public class ProductDtoToGetResponseConverter implements Converter<ProductDto, GetProductResponse> {
     @Override
-    public ProductDto convert(CreateProductRequest source) {
-        return ProductDto.builder()
+    public GetProductResponse convert(ProductDto source) {
+        return GetProductResponse.builder()
+                .id(source.getId())
                 .article(source.getArticle())
                 .name(source.getName())
                 .description(source.getDescription())
@@ -17,6 +18,8 @@ public class CreatedRequestToProductDto implements Converter<CreateProductReques
                 .price(source.getPrice())
                 .quantity(source.getQuantity())
                 .isAvailable(source.getIsAvailable())
+                .lastQuantityChange(source.getLastQuantityChange())
+                .createdAt(source.getCreatedAt())
                 .build();
     }
 }

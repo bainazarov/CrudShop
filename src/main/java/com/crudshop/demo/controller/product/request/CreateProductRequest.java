@@ -26,6 +26,7 @@ public class CreateProductRequest {
     private Double price;
 
     @NotNull(message = "Quantity can not be null")
+    @Positive(message = "Quantity can not be negative")
     private Integer quantity;
 
     private Boolean isAvailable;
