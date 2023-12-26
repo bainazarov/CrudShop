@@ -2,6 +2,7 @@ package com.crudshop.demo.controller.order;
 
 import com.crudshop.demo.controller.order.request.CreateOrderRequest;
 import com.crudshop.demo.controller.order.request.UpdateOrderRequest;
+import com.crudshop.demo.controller.order.response.GetOrderAndProductIDResponse;
 import com.crudshop.demo.controller.order.response.GetOrderResponse;
 import com.crudshop.demo.dto.OrderDto;
 import com.crudshop.demo.service.order.OrderService;
@@ -10,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +25,6 @@ public class OrderControllerImpl implements OrderController {
     private final OrderService orderService;
     private final ConversionService conversionService;
 
-    @PostMapping
     @Override
     public UUID createOrder(@RequestParam final UUID customerId,
                             @RequestBody @Valid final CreateOrderRequest request) {
@@ -44,5 +43,13 @@ public class OrderControllerImpl implements OrderController {
         log.info("Изменили статус заказа на " + request.getStatus());
 
         return updateStatus;
+    }
+
+    @Override
+    public GetOrderAndProductIDResponse getOrdersByProductId() {
+        GetOrderAndProductIDResponse response = orderService.getOrdersByProductId();
+        log.info("Получили информацию о заказанных продуктах ");
+
+        return response;
     }
 }

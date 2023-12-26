@@ -1,7 +1,10 @@
 package com.crudshop.demo.service.order;
 
 import com.crudshop.demo.controller.order.request.OrderedProductInfo;
+import com.crudshop.demo.controller.order.response.GetOrderAndProductIDResponse;
+import com.crudshop.demo.dto.CustomerDto;
 import com.crudshop.demo.dto.OrderDto;
+import com.crudshop.demo.dto.OrderWithCustomerDto;
 import com.crudshop.demo.entity.CustomerEntity;
 import com.crudshop.demo.entity.OrderEntity;
 import com.crudshop.demo.entity.OrderStatus;
@@ -12,6 +15,7 @@ import com.crudshop.demo.exception.CustomerNotFoundException;
 import com.crudshop.demo.exception.NotEnoughQuantityForProductException;
 import com.crudshop.demo.exception.OrderNotFoundException;
 import com.crudshop.demo.exception.ProductNotFoundException;
+import com.crudshop.demo.interaction.GetINNClient;
 import com.crudshop.demo.repository.CustomerRepository;
 import com.crudshop.demo.repository.OrderRepository;
 import com.crudshop.demo.repository.OrderedProductRepository;
@@ -19,8 +23,11 @@ import com.crudshop.demo.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +36,7 @@ public class OrderServiceImpl implements OrderService {
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
     private final OrderedProductRepository orderedProductRepository;
+    private final GetINNClient getINNClient;
 
     @Override
     public UUID createOrder(final UUID customerId, final List<OrderedProductInfo> productIds) {
@@ -84,6 +92,54 @@ public class OrderServiceImpl implements OrderService {
                 .customer(updatedOrder.getCustomer())
                 .totalPrice(updatedOrder.getTotalPrice())
                 .status(updatedOrder.getStatus())
+                .build();
+    }
+
+    @Override
+    public GetOrderAndProductIDResponse getOrdersByProductId() {
+        final List<OrderedProduct> orderedProducts = orderedProductRepository.findAll();
+        final List<UUID> orderIds = orderedProducts.stream()
+                .map(orderedProduct -> orderedProduct.getOrderedProductKey().getOrderId())
+                .collect(Collectors.toList());
+
+        final List<OrderEntity> orders = orderRepository.findAllById(orderIds);
+        final List<CustomerEntity> customers = customerRepository.findAll();
+        final List<String> emails = new ArrayList<>();
+
+        for (CustomerEntity customer : customers) {
+            emails.add(customer.getEmail());
+        }
+        final Map<String, String> emailToINNMap = getINNClient.getINN(emails);
+
+        final Map<UUID, List<OrderWithCustomerDto>> ordersGroupedByProductId = orderedProducts.stream()
+                .filter(orderedProduct -> orderedProduct.getOrderedProductKey().getProductId() != null)
+                .collect(Collectors.groupingBy(orderedProduct -> orderedProduct.getOrderedProductKey().getProductId(),
+                        Collectors.mapping(orderedProduct -> {
+                            final OrderEntity order = orders.stream()
+                                    .filter(ordered ->
+                                            ordered.getId().equals(orderedProduct.getOrderedProductKey().getOrderId()))
+                                    .findFirst()
+                                    .orElse(null);
+                            if (order != null) {
+                                final CustomerEntity customer = order.getCustomer();
+                                return OrderWithCustomerDto.builder()
+                                        .id(order.getId())
+                                        .customer(CustomerDto.builder()
+                                                .id(customer.getId())
+                                                .name(customer.getName())
+                                                .email(customer.getEmail())
+                                                .inn(emailToINNMap.get(customer.getEmail()))
+                                                .build())
+                                        .totalPrice(order.getTotalPrice())
+                                        .status(order.getStatus())
+                                        .build();
+                            } else {
+                                return null;
+                            }
+                        }, Collectors.toList())));
+
+        return GetOrderAndProductIDResponse.builder()
+                .orders(ordersGroupedByProductId)
                 .build();
     }
 }

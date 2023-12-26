@@ -4,8 +4,6 @@ import com.crudshop.demo.dto.CustomerDto;
 import com.crudshop.demo.dto.OrderDto;
 import com.crudshop.demo.entity.CustomerEntity;
 import com.crudshop.demo.entity.OrderEntity;
-import com.crudshop.demo.entity.ProductEntity;
-import com.crudshop.demo.exception.ArticleAlreadyExistsException;
 import com.crudshop.demo.exception.EmailAlreadyExistsException;
 import com.crudshop.demo.repository.CustomerRepository;
 import com.crudshop.demo.repository.OrderRepository;

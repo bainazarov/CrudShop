@@ -14,4 +14,6 @@ public class CustomerDto {
     String name;
 
     String email;
+
+    String inn;
 }
