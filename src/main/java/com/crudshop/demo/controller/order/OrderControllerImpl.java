@@ -1,21 +1,26 @@
 package com.crudshop.demo.controller.order;
 
 import com.crudshop.demo.controller.order.request.CreateOrderRequest;
-import com.crudshop.demo.controller.order.request.UpdateOrderRequest;
+import com.crudshop.demo.controller.order.request.OrderedProductInfo;
+import com.crudshop.demo.controller.order.request.UpdateOrderStatusRequest;
 import com.crudshop.demo.controller.order.response.GetOrderAndProductIDResponse;
 import com.crudshop.demo.controller.order.response.GetOrderResponse;
 import com.crudshop.demo.dto.OrderDto;
+import com.crudshop.demo.entity.projection.ProductProjection;
+import com.crudshop.demo.exception.OrderNotFoundException;
 import com.crudshop.demo.service.order.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,9 +41,8 @@ public class OrderControllerImpl implements OrderController {
 
     @Override
     public GetOrderResponse updateStatusOnOrder(@PathVariable final UUID orderId,
-                                                @RequestBody final UpdateOrderRequest request) {
-        final OrderDto updatedOrderDto = conversionService.convert(request, OrderDto.class);
-        final OrderDto updatedOrder = orderService.updateStatusOnOrder(orderId, updatedOrderDto);
+                                                @RequestBody final UpdateOrderStatusRequest request) {
+        final OrderDto updatedOrder = orderService.updateStatusOnOrder(orderId, request.getStatus());
         final GetOrderResponse updateStatus = conversionService.convert(updatedOrder, GetOrderResponse.class);
         log.info("Изменили статус заказа на " + request.getStatus());
 
@@ -51,5 +55,32 @@ public class OrderControllerImpl implements OrderController {
         log.info("Получили информацию о заказанных продуктах ");
 
         return response;
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteOrderById(final UUID id) {
+        try {
+            orderService.deleteOrderById(id);
+        } catch (OrderNotFoundException e) {
+            return ResponseEntity.noContent().build();
+        }
+        log.info("Удалили заказ с id " + id);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public List<ProductProjection> getOrderById(final UUID orderId,final UUID customerId) {
+        log.info("Получили информацию о заказе по ID ");
+        return orderService.getOrderById(orderId, customerId);
+    }
+
+    @Override
+    public UUID addProductsToExistingOrder(final UUID orderId,
+                                   final List<OrderedProductInfo> products) {
+        final UUID responseId = orderService.addProductsToExistingOrder(orderId, products);
+        log.info("Добавили продукт(-ы) в заказ с ID" + orderId );
+
+        return responseId;
     }
 }

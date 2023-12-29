@@ -1,6 +1,7 @@
 package com.crudshop.demo.controller.product.request;
 
 import com.crudshop.demo.entity.Categories;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -26,7 +27,7 @@ public class CreateProductRequest {
     private Double price;
 
     @NotNull(message = "Quantity can not be null")
-    @Positive(message = "Quantity can not be negative")
+    @Min(value = 0L, message = "Quantity can not be negative")
     private Integer quantity;
 
     private Boolean isAvailable;

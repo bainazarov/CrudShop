@@ -11,6 +11,7 @@ import com.crudshop.demo.entity.OrderStatus;
 import com.crudshop.demo.entity.OrderedProduct;
 import com.crudshop.demo.entity.OrderedProductKey;
 import com.crudshop.demo.entity.ProductEntity;
+import com.crudshop.demo.entity.projection.ProductProjection;
 import com.crudshop.demo.exception.CustomerNotFoundException;
 import com.crudshop.demo.exception.NotEnoughQuantityForProductException;
 import com.crudshop.demo.exception.OrderNotFoundException;
@@ -22,6 +23,7 @@ import com.crudshop.demo.repository.OrderedProductRepository;
 import com.crudshop.demo.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +40,10 @@ public class OrderServiceImpl implements OrderService {
     private final OrderedProductRepository orderedProductRepository;
     private final GetINNClient getINNClient;
 
+
     @Override
-    public UUID createOrder(final UUID customerId, final List<OrderedProductInfo> productIds) {
+    @Transactional
+    public UUID createOrder(final UUID customerId, final List<OrderedProductInfo> products) {
         final CustomerEntity customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException
                         ("Пользователь с таким ID " + customerId + " не был найден "));
@@ -50,40 +54,127 @@ public class OrderServiceImpl implements OrderService {
                 .status(OrderStatus.CREATED)
                 .build();
 
-        for (OrderedProductInfo orderedProductInfo : productIds) {
-            final ProductEntity product = productRepository.findById(orderedProductInfo.getId())
-                    .orElseThrow(() -> new ProductNotFoundException
-                            ("Продукт с таким ID  " + orderedProductInfo.getId() + " не был найден"));
+        final List<UUID> productIds = products.stream()
+                .map(OrderedProductInfo::getId)
+                .collect(Collectors.toList());
 
-            int orderedQuantity = orderedProductInfo.getQuantity();
-            if (product.getQuantity() < orderedQuantity) {
-                throw new NotEnoughQuantityForProductException
-                        ("Недостаточное количество продуктов с ID" + product.getId());
-            }
-            product.setQuantity(product.getQuantity() - orderedQuantity);
-            order.setTotalPrice(order.getTotalPrice() + (product.getPrice() * orderedQuantity));
+        final List<ProductEntity> productList = productRepository.findAllById(productIds);
+        Map<UUID, ProductEntity> productMap = productList.stream()
+                .collect(Collectors.toMap(ProductEntity::getId, product -> product));
 
-            final OrderedProductKey orderedProductKey = new OrderedProductKey();
-            orderedProductKey.setOrderId(order.getId());
-            orderedProductKey.setProductId(product.getId());
-            final OrderedProduct orderedProduct = OrderedProduct.builder()
-                    .orderedProductKey(orderedProductKey)
-                    .order(order)
-                    .product(product)
-                    .quantity(orderedQuantity)
-                    .price(product.getPrice() * orderedQuantity)
-                    .build();
-            orderRepository.save(order);
-            orderedProductRepository.save(orderedProduct);
-        }
+        final List<OrderedProduct> orderedProducts = products.stream()
+                .map(p -> {
+                    final UUID productId = p.getId();
+                    int orderedQuantity = p.getQuantity();
+
+                    final ProductEntity product = productMap.get(productId);
+                    if (product == null) {
+                        throw new ProductNotFoundException("Продукт с ID " + productId + " не был найден");
+                    }
+
+                    if (product.getQuantity() < orderedQuantity) {
+                        throw new NotEnoughQuantityForProductException
+                                ("Недостаточное количество продуктов с ID " + productId);
+                    }
+
+                    double productPrice = product.getPrice() * orderedQuantity;
+
+                    product.setQuantity(product.getQuantity() - orderedQuantity);
+
+                    final OrderedProductKey orderedProductKey = new OrderedProductKey();
+                    orderedProductKey.setOrderId(order.getId());
+                    orderedProductKey.setProductId(productId);
+
+                    return OrderedProduct.builder()
+                            .orderedProductKey(orderedProductKey)
+                            .order(order)
+                            .product(product)
+                            .quantity(orderedQuantity)
+                            .price(productPrice)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        order.setTotalPrice(
+                orderedProducts.stream()
+                        .mapToDouble(x -> x.getQuantity() * x.getPrice())
+                        .sum()
+        );
+        productRepository.saveAll(productList);
+        orderRepository.save(order);
+        orderedProductRepository.saveAll(orderedProducts);
+
         return order.getId();
     }
 
     @Override
-    public OrderDto updateStatusOnOrder(final UUID orderId, final OrderDto orderDto) {
+    public List<ProductProjection> getOrderById(final UUID orderId, final UUID customerId) {
+        return orderRepository.getProjectionsByOrderIdAndCustomerId(orderId, customerId);
+    }
+
+    @Override
+    @Transactional
+    public UUID addProductsToExistingOrder(final UUID orderId, final List<OrderedProductInfo> products) {
+        final OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Заказ с таким ID " + orderId + " не был найден"));
+        if (order.getStatus() != OrderStatus.CREATED) {
+            throw new IllegalStateException("Невозможно добавить продукты к заказу со статусом " + order.getStatus());
+        }
+
+        final List<OrderedProduct> orderedProducts = new ArrayList<>();
+        final Map<UUID, ProductEntity> productMap = productRepository.findAllById(products.stream()
+                        .map(OrderedProductInfo::getId)
+                        .collect(Collectors.toList()))
+                .stream()
+                .collect(Collectors.toMap(ProductEntity::getId, product -> product));
+
+        for (OrderedProductInfo orderedProductInfo : products) {
+            final UUID productId = orderedProductInfo.getId();
+            int orderedQuantity = orderedProductInfo.getQuantity();
+            final ProductEntity product = productMap.get(productId);
+            if (product == null) {
+                throw new ProductNotFoundException("Продукт с ID " + productId + " не был найден");
+            }
+            if (product.getQuantity() < orderedQuantity) {
+                throw new NotEnoughQuantityForProductException("Недостаточное количество продуктов с ID " + productId);
+            }
+            double productPrice = product.getPrice() * orderedQuantity;
+            OrderedProduct orderedProduct = orderedProductRepository.findByOrderAndProduct(order, product);
+            if (orderedProduct != null) {
+                orderedProduct.setQuantity(orderedProduct.getQuantity() + orderedQuantity);
+                orderedProduct.setPrice(orderedProduct.getPrice() + productPrice);
+            } else {
+                final OrderedProductKey orderedProductKey = new OrderedProductKey();
+                orderedProductKey.setOrderId(orderId);
+                orderedProductKey.setProductId(productId);
+                orderedProduct = OrderedProduct.builder()
+                        .orderedProductKey(orderedProductKey)
+                        .order(order)
+                        .product(product)
+                        .quantity(orderedQuantity)
+                        .price(productPrice)
+                        .build();
+            }
+            orderedProducts.add(orderedProduct);
+            product.setQuantity(product.getQuantity() - orderedQuantity);
+        }
+        order.setTotalPrice(
+                orderedProducts.stream()
+                        .mapToDouble(x -> x.getQuantity() * x.getPrice())
+                        .sum()
+        );
+        productRepository.saveAll(productMap.values());
+        orderRepository.save(order);
+        orderedProductRepository.saveAll(orderedProducts);
+        return orderId;
+    }
+
+
+    @Override
+    public OrderDto updateStatusOnOrder(final UUID orderId, final OrderStatus status) {
         final OrderEntity order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Заказ с таким id не был найден "));
-        order.setStatus(orderDto.getStatus());
+        order.setStatus(status);
 
         final OrderEntity updatedOrder = orderRepository.save(order);
 
@@ -93,6 +184,27 @@ public class OrderServiceImpl implements OrderService {
                 .totalPrice(updatedOrder.getTotalPrice())
                 .status(updatedOrder.getStatus())
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public void deleteOrderById(UUID orderId) {
+        List<OrderedProduct> orderedProducts = orderedProductRepository.findAll()
+                .stream()
+                .filter(orderedProduct -> orderedProduct.getOrderedProductKey().getOrderId().equals(orderId))
+                .collect(Collectors.toList());
+
+        for (OrderedProduct orderedProduct : orderedProducts) {
+            ProductEntity product = orderedProduct.getProduct();
+            product.setQuantity(product.getQuantity() + orderedProduct.getQuantity());
+        }
+
+        OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Заказ с таким id не был найден"));
+        order.setStatus(OrderStatus.CANCELLED);
+
+        orderedProductRepository.saveAll(orderedProducts);
+        orderRepository.save(order);
     }
 
     @Override
