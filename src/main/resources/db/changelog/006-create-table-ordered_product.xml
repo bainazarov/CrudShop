@@ -1,0 +1,34 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+    <changeSet id="006-create-table-ordered_product" author="Bainazarov Abdurakhmon">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="ordered_product"/>
+            </not>
+        </preConditions>
+        <createTable tableName="ordered_product">
+            <column name="order_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="NUMERIC(10,2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="ordered_product" columnNames="order_id, product_id"/>
+        <addForeignKeyConstraint baseTableName="ordered_product" baseColumnNames="order_id"
+                                 referencedTableName="orders" referencedColumnNames="id"
+                                 constraintName="fk_ordered_product_orders"/>
+        <addForeignKeyConstraint baseTableName="ordered_product" baseColumnNames="product_id"
+                                 referencedTableName="products" referencedColumnNames="id"
+                                 constraintName="fk_ordered_product_products"/>
+    </changeSet>
+</databaseChangeLog>

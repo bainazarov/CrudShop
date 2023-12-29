@@ -23,6 +23,7 @@ public class UpdateProductRequest {
     @Positive(message = "Price should be at least 0 or higher")
     private Double price;
 
+    @Positive(message = "Quantity can not be negative")
     private Integer quantity;
 
     @NotNull(message = "isAvailable can not be blank")

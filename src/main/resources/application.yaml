@@ -16,6 +16,7 @@ spring:
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    show-sql: true
 
   liquibase:
     change-log: classpath:db/changelog/changelog.xml
