@@ -1,6 +1,7 @@
 package com.crudshop.demo.controller.order;
 
 
+import com.crudshop.demo.controller.order.request.ChangeAddressRequest;
 import com.crudshop.demo.controller.order.request.CreateOrderRequest;
 import com.crudshop.demo.controller.order.request.OrderedProductInfo;
 import com.crudshop.demo.controller.order.request.UpdateOrderStatusRequest;
@@ -28,7 +29,7 @@ public interface OrderController {
 
     @PostMapping
     UUID createOrder(@RequestParam final UUID customerId,
-                     @RequestBody @Valid final CreateOrderRequest request);
+                     @RequestBody @Valid final CreateOrderRequest products);
 
     @PutMapping("/{orderId}")
     GetOrderResponse updateStatusOnOrder(@PathVariable final UUID orderId,
@@ -46,4 +47,8 @@ public interface OrderController {
     @PostMapping("/{orderId}")
     UUID addProductsToExistingOrder(@PathVariable final UUID orderId,
             @RequestBody final List<OrderedProductInfo> products);
+
+    @PostMapping("/changeAddress/{orderId}")
+    UUID changeAddressOnOrder(@PathVariable final UUID orderId,
+                              @RequestBody final ChangeAddressRequest deliveryAddress);
 }

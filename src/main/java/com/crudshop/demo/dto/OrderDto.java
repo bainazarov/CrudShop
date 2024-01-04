@@ -18,4 +18,6 @@ public class OrderDto {
     Double totalPrice;
 
     OrderStatus status;
+
+    String deliveryAddress;
 }

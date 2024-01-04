@@ -1,5 +1,6 @@
 package com.crudshop.demo.controller.order;
 
+import com.crudshop.demo.controller.order.request.ChangeAddressRequest;
 import com.crudshop.demo.controller.order.request.CreateOrderRequest;
 import com.crudshop.demo.controller.order.request.OrderedProductInfo;
 import com.crudshop.demo.controller.order.request.UpdateOrderStatusRequest;
@@ -9,14 +10,12 @@ import com.crudshop.demo.dto.OrderDto;
 import com.crudshop.demo.entity.projection.ProductProjection;
 import com.crudshop.demo.exception.OrderNotFoundException;
 import com.crudshop.demo.service.order.OrderService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -31,10 +30,10 @@ public class OrderControllerImpl implements OrderController {
     private final ConversionService conversionService;
 
     @Override
-    public UUID createOrder(@RequestParam final UUID customerId,
-                            @RequestBody @Valid final CreateOrderRequest request) {
-        final UUID requestId = orderService.createOrder(customerId, request.getProducts());
-        log.info("Создали заказ с на адресс " + request.getDeliveryAddress());
+    public UUID createOrder(final UUID customerId,
+                            final CreateOrderRequest request) {
+        final UUID requestId = orderService.createOrder(customerId, request.getDeliveryAddress(), request.getProducts());
+        log.info("Создали заказ на адрес " + request.getDeliveryAddress());
 
         return requestId;
     }
@@ -60,7 +59,7 @@ public class OrderControllerImpl implements OrderController {
     @Override
     public ResponseEntity<Void> deleteOrderById(final UUID id) {
         try {
-            orderService.deleteOrderById(id);
+            orderService.cancelOrderById(id);
         } catch (OrderNotFoundException e) {
             return ResponseEntity.noContent().build();
         }
@@ -71,7 +70,7 @@ public class OrderControllerImpl implements OrderController {
 
     @Override
     public List<ProductProjection> getOrderById(final UUID orderId,final UUID customerId) {
-        log.info("Получили информацию о заказе по ID ");
+        log.info("Получили информацию о заказе по ID " + orderId);
         return orderService.getOrderById(orderId, customerId);
     }
 
@@ -82,5 +81,12 @@ public class OrderControllerImpl implements OrderController {
         log.info("Добавили продукт(-ы) в заказ с ID" + orderId );
 
         return responseId;
+    }
+
+    @Override
+    public UUID changeAddressOnOrder(final UUID orderId, final ChangeAddressRequest deliveryAddress) {
+        log.info("Поменяли адрес у заказа под ID " + orderId);
+
+        return orderService.changeAddressOnOrder(orderId, deliveryAddress);
     }
 }

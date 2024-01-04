@@ -47,4 +47,7 @@ public class OrderEntity {
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
+
+    @Column(name = "address", nullable = false)
+    private String deliveryAddress;
 }

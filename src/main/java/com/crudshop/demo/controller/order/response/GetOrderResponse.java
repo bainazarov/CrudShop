@@ -14,4 +14,6 @@ public class GetOrderResponse {
     Double totalPrice;
 
     OrderStatus status;
+
+    String deliveryAddress;
 }
