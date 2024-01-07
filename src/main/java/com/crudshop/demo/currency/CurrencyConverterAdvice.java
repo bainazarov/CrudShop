@@ -1,4 +1,4 @@
-package com.crudshop.demo.util;
+package com.crudshop.demo.currency;
 
 import com.crudshop.demo.controller.product.response.GetProductResponse;
 import lombok.RequiredArgsConstructor;

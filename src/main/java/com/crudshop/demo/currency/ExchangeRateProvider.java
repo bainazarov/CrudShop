@@ -1,4 +1,4 @@
-package com.crudshop.demo.util;
+package com.crudshop.demo.currency;
 
 import com.crudshop.demo.interaction.ExchangeRateClient;
 import com.fasterxml.jackson.databind.ObjectMapper;

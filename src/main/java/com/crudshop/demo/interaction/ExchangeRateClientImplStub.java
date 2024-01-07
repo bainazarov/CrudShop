@@ -1,7 +1,6 @@
 package com.crudshop.demo.interaction;
 
-import com.crudshop.demo.util.Currency;
-import com.crudshop.demo.util.ExchangeRate;
+import com.crudshop.demo.currency.ExchangeRate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Primary;
