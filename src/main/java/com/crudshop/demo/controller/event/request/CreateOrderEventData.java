@@ -8,7 +8,6 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,14 +17,14 @@ import java.util.UUID;
 public class CreateOrderEventData implements HttpEvent {
 
     @NotNull(message = "Customer id can not be blank")
-    UUID customerId;
+    private final UUID customerId;
 
     @NotBlank(message = "Delivery address can not be blank")
-    String deliveryAddress;
+    private final String deliveryAddress;
 
     @NotEmpty(message = "Products list can not be empty")
     @Valid
-    List<OrderedProductInfo> products;
+    private final List<OrderedProductInfo> products;
 
     @Override
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

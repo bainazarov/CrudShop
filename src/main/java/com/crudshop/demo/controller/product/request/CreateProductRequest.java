@@ -8,6 +8,8 @@ import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 public class CreateProductRequest {
@@ -24,7 +26,7 @@ public class CreateProductRequest {
     private Categories categories;
 
     @Positive(message = "Price should be at least 0 or higher")
-    private Double price;
+    private BigDecimal price;
 
     @NotNull(message = "Quantity can not be null")
     @Min(value = 0L, message = "Quantity can not be negative")

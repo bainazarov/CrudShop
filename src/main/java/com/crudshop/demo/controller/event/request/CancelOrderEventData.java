@@ -1,24 +1,22 @@
 package com.crudshop.demo.controller.event.request;
 
-import com.crudshop.demo.entity.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.UUID;
 
 @Data
 @Builder
-public class CancelledOrderEventData implements HttpEvent {
+public class CancelOrderEventData implements HttpEvent {
 
-    @NotNull(message = "Id can not be null")
-    UUID orderId;
+    @NotNull(message = "orderId can not be null")
+    private final UUID orderId;
 
     @Override
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public Event getEvent() {
-        return Event.CANCELLED_ORDER;
+        return Event.CANCEL_ORDER;
     }
 }

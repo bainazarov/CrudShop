@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,7 @@ public class OrderServiceImpl implements OrderService {
 
         final OrderEntity order = OrderEntity.builder()
                 .customer(customer)
-                .totalPrice(0.0)
+                .totalPrice(BigDecimal.valueOf(0))
                 .status(OrderStatus.CREATED)
                 .deliveryAddress(address)
                 .build();
@@ -80,7 +81,7 @@ public class OrderServiceImpl implements OrderService {
                                 ("Недостаточное количество продуктов с ID " + productId);
                     }
                     product.setQuantity(product.getQuantity() - orderedQuantity);
-                    double productPrice = product.getPrice() * orderedQuantity;
+                    BigDecimal productPrice = product.getPrice().multiply(BigDecimal.valueOf(orderedQuantity));
 
                     final OrderedProductKey orderedProductKey = new OrderedProductKey();
                     orderedProductKey.setOrderId(order.getId());
@@ -98,8 +99,8 @@ public class OrderServiceImpl implements OrderService {
 
         order.setTotalPrice(
                 orderedProducts.stream()
-                        .mapToDouble(OrderedProduct::getPrice)
-                        .sum()
+                        .map(OrderedProduct::getPrice)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add)
         );
         productRepository.saveAll(productList);
         orderRepository.save(order);
@@ -140,11 +141,11 @@ public class OrderServiceImpl implements OrderService {
             if (product.getQuantity() < orderedQuantity) {
                 throw new NotEnoughQuantityForProductException("Недостаточное количество продуктов с ID " + productId);
             }
-            double productPrice = product.getPrice() * orderedQuantity;
+            BigDecimal productPrice = product.getPrice().multiply(BigDecimal.valueOf(orderedQuantity));
             OrderedProduct orderedProduct = orderedProductRepository.findByOrderAndProduct(order, product);
             if (orderedProduct != null) {
                 orderedProduct.setQuantity(orderedProduct.getQuantity() + orderedQuantity);
-                orderedProduct.setPrice(orderedProduct.getPrice() + productPrice);
+                orderedProduct.setPrice(orderedProduct.getPrice().add(productPrice));
             } else {
                 final OrderedProductKey orderedProductKey = new OrderedProductKey();
                 orderedProductKey.setOrderId(orderId);
@@ -162,8 +163,8 @@ public class OrderServiceImpl implements OrderService {
         }
         order.setTotalPrice(
                 orderedProducts.stream()
-                        .mapToDouble(x -> x.getQuantity() * x.getPrice())
-                        .sum()
+                        .map(OrderedProduct::getPrice)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add)
         );
         productRepository.saveAll(productMap.values());
         orderRepository.save(order);

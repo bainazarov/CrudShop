@@ -13,11 +13,11 @@ import java.util.UUID;
 @Builder
 public class CompletedOrderEventData implements HttpEvent {
 
-    @NotNull(message = "Id can not be null")
-    UUID orderId;
+    @NotNull(message = "orderId can not be null")
+    private final UUID orderId;
 
     @NotNull(message = "Статус не может быть пустым")
-    OrderStatus status;
+    private final OrderStatus status;
 
     @Override
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

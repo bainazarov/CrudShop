@@ -12,10 +12,10 @@ import java.util.UUID;
 @Builder
 public class ChangeAddressEventData implements HttpEvent {
 
-    @NotNull(message = "Id can not be null")
-    UUID orderId;
+    @NotNull(message = "orderId can not be null")
+    private final UUID orderId;
 
-    ChangeAddressRequest deliveryAddress;
+    private final ChangeAddressRequest deliveryAddress;
 
     @Override
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

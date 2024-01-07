@@ -84,9 +84,9 @@ public class OrderControllerImpl implements OrderController {
     }
 
     @Override
-    public UUID changeAddressOnOrder(final UUID orderId, final ChangeAddressRequest deliveryAddress) {
+    public UUID changeAddressOnOrder(final UUID orderId, final ChangeAddressRequest request) {
         log.info("Поменяли адрес у заказа под ID " + orderId);
 
-        return orderService.changeAddressOnOrder(orderId, deliveryAddress);
+        return orderService.changeAddressOnOrder(orderId, request);
     }
 }

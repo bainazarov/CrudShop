@@ -29,7 +29,7 @@ public interface OrderController {
 
     @PostMapping
     UUID createOrder(@RequestParam final UUID customerId,
-                     @RequestBody @Valid final CreateOrderRequest products);
+                     @RequestBody @Valid final CreateOrderRequest request);
 
     @PutMapping("/{orderId}")
     GetOrderResponse updateStatusOnOrder(@PathVariable final UUID orderId,
@@ -50,5 +50,5 @@ public interface OrderController {
 
     @PostMapping("/changeAddress/{orderId}")
     UUID changeAddressOnOrder(@PathVariable final UUID orderId,
-                              @RequestBody final ChangeAddressRequest deliveryAddress);
+                              @RequestBody final ChangeAddressRequest request);
 }
