@@ -44,6 +44,7 @@ public class CustomerServiceImpl implements CustomerService {
                         .id(orderEntity.getId())
                         .totalPrice(orderEntity.getTotalPrice())
                         .status(orderEntity.getStatus())
+                        .deliveryAddress(orderEntity.getDeliveryAddress())
                         .build())
                 .collect(Collectors.toList());
     }

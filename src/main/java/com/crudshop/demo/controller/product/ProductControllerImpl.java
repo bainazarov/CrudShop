@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -79,7 +80,7 @@ public class ProductControllerImpl implements ProductController {
     @Override
     public List<GetProductResponse> searchProducts(@RequestParam(required = false) final String name,
                                                    @RequestParam(required = false) final Integer quantity,
-                                                   @RequestParam(required = false) final Double price,
+                                                   @RequestParam(required = false) final BigDecimal price,
                                                    @RequestParam(required = false) final Boolean isAvailable) {
         final ProductFilterDto filter = ProductFilterDto.builder()
                 .name(name)

@@ -12,6 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -36,5 +38,5 @@ public class OrderedProduct {
     private Integer quantity;
 
     @Column(name = "price", nullable = false)
-    private Double price;
+    private BigDecimal price;
 }

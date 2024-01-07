@@ -1,7 +1,6 @@
 package com.crudshop.demo.interaction;
 
-import com.crudshop.demo.util.Currency;
-import com.crudshop.demo.util.ExchangeRate;
+import com.crudshop.demo.currency.ExchangeRate;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -5,13 +5,17 @@ import com.crudshop.demo.entity.OrderStatus;
 import lombok.Builder;
 import lombok.Value;
 
+import java.math.BigDecimal;
+
 @Value
 @Builder
 public class GetOrderResponse {
 
     CustomerEntity customer;
 
-    Double totalPrice;
+    BigDecimal totalPrice;
 
     OrderStatus status;
+
+    String deliveryAddress;
 }

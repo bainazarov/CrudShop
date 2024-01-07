@@ -4,6 +4,7 @@ import com.crudshop.demo.entity.OrderStatus;
 import lombok.Builder;
 import lombok.Value;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Value
@@ -11,7 +12,7 @@ import java.util.UUID;
 public class GetCustomerOrders {
     UUID id;
 
-    Double totalPrice;
+    BigDecimal totalPrice;
 
     OrderStatus status;
 }

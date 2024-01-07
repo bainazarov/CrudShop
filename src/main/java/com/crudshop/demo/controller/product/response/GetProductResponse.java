@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ public class GetProductResponse {
 
     private Categories categories;
 
-    private Double price;
+    private BigDecimal price;
 
     private Integer quantity;
 

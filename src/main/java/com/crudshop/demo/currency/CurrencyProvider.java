@@ -1,4 +1,4 @@
-package com.crudshop.demo.util;
+package com.crudshop.demo.currency;
 
 import lombok.Data;
 import org.springframework.stereotype.Component;

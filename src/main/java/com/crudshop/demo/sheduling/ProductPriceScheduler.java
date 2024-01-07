@@ -8,6 +8,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 
@@ -16,10 +18,10 @@ import java.util.List;
 public class ProductPriceScheduler {
 
     private final ProductRepository productRepository;
-    private final Double priceIncreasePercentage;
+    private final BigDecimal priceIncreasePercentage;
 
     public ProductPriceScheduler(ProductRepository productRepository,
-                                 @Value("${app.scheduling.priceIncreasePercentage:10}") Double priceIncreasePercentage) {
+                                 @Value("${app.scheduling.priceIncreasePercentage:10}") BigDecimal priceIncreasePercentage) {
         this.productRepository = productRepository;
         this.priceIncreasePercentage = priceIncreasePercentage;
     }
@@ -30,9 +32,10 @@ public class ProductPriceScheduler {
         List<ProductEntity> products = productRepository.findAll();
 
         products.forEach(product -> {
-            double currentPrice = product.getPrice();
-            double newPrice = currentPrice * (1 + (priceIncreasePercentage / 100));
-            product.setPrice(newPrice);
+            BigDecimal currentPrice = product.getPrice();
+            BigDecimal newPrice = currentPrice.multiply(BigDecimal.ONE.add
+                    (priceIncreasePercentage.divide(BigDecimal.valueOf(100))));
+            product.setPrice(newPrice.setScale(2, RoundingMode.HALF_UP));
         });
         Thread.sleep(30000);
         productRepository.saveAll(products);

@@ -24,6 +24,10 @@
             <column name="status" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="address" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
 
         </createTable>
     </changeSet>

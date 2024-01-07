@@ -1,4 +1,4 @@
-package com.crudshop.demo.util;
+package com.crudshop.demo.currency;
 
 import com.crudshop.demo.interaction.ExchangeRateClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Component
@@ -16,16 +17,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ExchangeRateProvider {
 
-    private final Double DEFAULT_COURSE_RUB = 1.00;
+    private final BigDecimal DEFAULT_COURSE_RUB = BigDecimal.valueOf(1.00);
     private final ExchangeRateClient exchangeRateClient;
 
 
-    public Double getExchangeRate(Currency currency) {
+    public BigDecimal getExchangeRate(Currency currency) {
         return Optional.ofNullable(getExchangeRateFromService(currency))
                 .orElseGet(() -> getExchangeRateFromFile(currency));
     }
 
-    private Double getExchangeRateFromFile(Currency currency) {
+    private BigDecimal getExchangeRateFromFile(Currency currency) {
         try {
             final ObjectMapper objectMapper = new ObjectMapper();
             final File file = new File("src/main/resources/exchange-rate.json");
@@ -40,13 +41,13 @@ public class ExchangeRateProvider {
         }
     }
 
-    private @Nullable Double getExchangeRateFromService(Currency currency) {
+    private @Nullable BigDecimal getExchangeRateFromService(Currency currency) {
         log.info("Получаем курс из второго сервиса или из кэша");
         return Optional.ofNullable(exchangeRateClient.getExchangeRate())
                 .map(rate -> getExchangeRateByCurrency(rate, currency)).orElse(null);
     }
 
-    private Double getExchangeRateByCurrency(ExchangeRate exchangeRate, Currency currency) {
+    private BigDecimal getExchangeRateByCurrency(ExchangeRate exchangeRate, Currency currency) {
         return switch (currency) {
             case USD -> exchangeRate.getExchangeRateUSD();
             case RUB -> exchangeRate.getExchangeRateRUB();
