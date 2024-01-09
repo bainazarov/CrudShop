@@ -20,6 +20,7 @@ public class EventControllerImpl implements EventController {
     private final EventService eventService;
     private final Producer producer;
 
+
     @Override
     public EventOrderResult orderEvent(@Valid HttpEvent httpEvent) {
         return EventOrderResult.builder()
