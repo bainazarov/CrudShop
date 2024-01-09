@@ -1,5 +1,6 @@
 package com.crudshop.demo.service.order;
 
+import com.crudshop.demo.controller.order.request.ChangeAddressRequest;
 import com.crudshop.demo.controller.order.request.OrderedProductInfo;
 import com.crudshop.demo.controller.order.response.GetOrderAndProductIDResponse;
 import com.crudshop.demo.dto.CustomerDto;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,15 +45,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public UUID createOrder(final UUID customerId, final List<OrderedProductInfo> products) {
+    public UUID createOrder(final UUID customerId, final String address,
+                            final List<OrderedProductInfo> products) {
         final CustomerEntity customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException
                         ("Пользователь с таким ID " + customerId + " не был найден "));
 
         final OrderEntity order = OrderEntity.builder()
                 .customer(customer)
-                .totalPrice(0.0)
+                .totalPrice(BigDecimal.valueOf(0))
                 .status(OrderStatus.CREATED)
+                .deliveryAddress(address)
                 .build();
 
         final List<UUID> productIds = products.stream()
@@ -76,10 +80,8 @@ public class OrderServiceImpl implements OrderService {
                         throw new NotEnoughQuantityForProductException
                                 ("Недостаточное количество продуктов с ID " + productId);
                     }
-
-                    double productPrice = product.getPrice() * orderedQuantity;
-
                     product.setQuantity(product.getQuantity() - orderedQuantity);
+                    BigDecimal productPrice = product.getPrice().multiply(BigDecimal.valueOf(orderedQuantity));
 
                     final OrderedProductKey orderedProductKey = new OrderedProductKey();
                     orderedProductKey.setOrderId(order.getId());
@@ -97,8 +99,8 @@ public class OrderServiceImpl implements OrderService {
 
         order.setTotalPrice(
                 orderedProducts.stream()
-                        .mapToDouble(x -> x.getQuantity() * x.getPrice())
-                        .sum()
+                        .map(OrderedProduct::getPrice)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add)
         );
         productRepository.saveAll(productList);
         orderRepository.save(order);
@@ -106,6 +108,7 @@ public class OrderServiceImpl implements OrderService {
 
         return order.getId();
     }
+
 
     @Override
     public List<ProductProjection> getOrderById(final UUID orderId, final UUID customerId) {
@@ -138,11 +141,11 @@ public class OrderServiceImpl implements OrderService {
             if (product.getQuantity() < orderedQuantity) {
                 throw new NotEnoughQuantityForProductException("Недостаточное количество продуктов с ID " + productId);
             }
-            double productPrice = product.getPrice() * orderedQuantity;
+            BigDecimal productPrice = product.getPrice().multiply(BigDecimal.valueOf(orderedQuantity));
             OrderedProduct orderedProduct = orderedProductRepository.findByOrderAndProduct(order, product);
             if (orderedProduct != null) {
                 orderedProduct.setQuantity(orderedProduct.getQuantity() + orderedQuantity);
-                orderedProduct.setPrice(orderedProduct.getPrice() + productPrice);
+                orderedProduct.setPrice(orderedProduct.getPrice().add(productPrice));
             } else {
                 final OrderedProductKey orderedProductKey = new OrderedProductKey();
                 orderedProductKey.setOrderId(orderId);
@@ -160,8 +163,8 @@ public class OrderServiceImpl implements OrderService {
         }
         order.setTotalPrice(
                 orderedProducts.stream()
-                        .mapToDouble(x -> x.getQuantity() * x.getPrice())
-                        .sum()
+                        .map(OrderedProduct::getPrice)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add)
         );
         productRepository.saveAll(productMap.values());
         orderRepository.save(order);
@@ -183,12 +186,13 @@ public class OrderServiceImpl implements OrderService {
                 .customer(updatedOrder.getCustomer())
                 .totalPrice(updatedOrder.getTotalPrice())
                 .status(updatedOrder.getStatus())
+                .deliveryAddress(updatedOrder.getDeliveryAddress())
                 .build();
     }
 
     @Override
     @Transactional
-    public void deleteOrderById(UUID orderId) {
+    public void cancelOrderById(UUID orderId) {
         List<OrderedProduct> orderedProducts = orderedProductRepository.findAll()
                 .stream()
                 .filter(orderedProduct -> orderedProduct.getOrderedProductKey().getOrderId().equals(orderId))
@@ -244,6 +248,7 @@ public class OrderServiceImpl implements OrderService {
                                                 .build())
                                         .totalPrice(order.getTotalPrice())
                                         .status(order.getStatus())
+                                        .deliveryAddress(order.getDeliveryAddress())
                                         .build();
                             } else {
                                 return null;
@@ -253,5 +258,15 @@ public class OrderServiceImpl implements OrderService {
         return GetOrderAndProductIDResponse.builder()
                 .orders(ordersGroupedByProductId)
                 .build();
+    }
+
+    @Override
+    public UUID changeAddressOnOrder(final UUID orderId, final ChangeAddressRequest deliveryAddress) {
+        final OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Заказ с таким ID " + orderId + " не был найден"));
+        order.setDeliveryAddress(deliveryAddress.getDeliveryAddress());
+        orderRepository.save(order);
+
+        return order.getId();
     }
 }

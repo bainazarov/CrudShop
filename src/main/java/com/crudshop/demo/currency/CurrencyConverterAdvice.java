@@ -1,4 +1,4 @@
-package com.crudshop.demo.util;
+package com.crudshop.demo.currency;
 
 import com.crudshop.demo.controller.product.response.GetProductResponse;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +10,8 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Optional;
 
 @RestControllerAdvice
@@ -26,14 +28,13 @@ public class CurrencyConverterAdvice implements ResponseBodyAdvice<GetProductRes
         return className.contains("ProductController") && methodName.contains("getProductById");
     }
 
-    @Override
     public GetProductResponse beforeBodyWrite(GetProductResponse body, MethodParameter returnType,
                                               MediaType selectedContentType,
                                               Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                               ServerHttpRequest request, ServerHttpResponse response) {
         Currency currency = currencyProvider.getCurrency();
-        Double rate = exchangeRateProvider.getExchangeRate(currency);
-        Optional.ofNullable(body).ifPresent(b -> b.setPrice(body.getPrice() / rate));
+        BigDecimal rate = exchangeRateProvider.getExchangeRate(currency);
+        Optional.ofNullable(body).ifPresent(b -> b.setPrice(body.getPrice().divide(rate, RoundingMode.HALF_UP)));
         return body;
     }
 }

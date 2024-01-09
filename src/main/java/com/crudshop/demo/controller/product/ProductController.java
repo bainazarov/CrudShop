@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,6 +49,6 @@ public interface ProductController {
     @Operation(summary = "Отфильтровать продукты по запросу")
     List<GetProductResponse> searchProducts(@RequestParam(required = false) final String name,
                                             @RequestParam(required = false) final Integer quantity,
-                                            @RequestParam(required = false) final Double price,
+                                            @RequestParam(required = false) final BigDecimal price,
                                             @RequestParam(required = false) final Boolean isAvailable);
 }

@@ -1,5 +1,6 @@
 package com.crudshop.demo.service.order;
 
+import com.crudshop.demo.controller.order.request.ChangeAddressRequest;
 import com.crudshop.demo.controller.order.request.OrderedProductInfo;
 import com.crudshop.demo.controller.order.response.GetOrderAndProductIDResponse;
 import com.crudshop.demo.dto.OrderDto;
@@ -13,7 +14,7 @@ import java.util.UUID;
 
 @Component
 public interface OrderService {
-    UUID createOrder(final UUID customerId,final List<OrderedProductInfo> productIds);
+    UUID createOrder(final UUID customerId, final String address, final List<OrderedProductInfo> productIds);
 
     List<ProductProjection> getOrderById(final UUID orderId,final UUID customerId);
 
@@ -22,7 +23,9 @@ public interface OrderService {
 
     OrderDto updateStatusOnOrder(UUID orderId, OrderStatus status);
 
-    void deleteOrderById(final UUID orderId);
+    void cancelOrderById(final UUID orderId);
 
     GetOrderAndProductIDResponse getOrdersByProductId();
+
+    UUID changeAddressOnOrder(final UUID orderId, final ChangeAddressRequest newAddress);
 }
