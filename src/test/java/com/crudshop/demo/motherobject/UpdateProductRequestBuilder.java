@@ -4,6 +4,8 @@ package com.crudshop.demo.motherobject;
 import com.crudshop.demo.controller.product.request.UpdateProductRequest;
 import com.crudshop.demo.entity.Categories;
 
+import java.math.BigDecimal;
+
 import static com.crudshop.demo.entity.Categories.FRUIT;
 
 public class UpdateProductRequestBuilder {
@@ -11,7 +13,7 @@ public class UpdateProductRequestBuilder {
     public static final String DEFAULT_NAME = "Яблоко";
     public static final String DEFAULT_DESCRIPTION = "Круглое красное";
     public static final Categories DEFAULT_CATEGORIES = FRUIT;
-    public static final Double DEFAULT_PRICE = 50.00;
+    public static final BigDecimal DEFAULT_PRICE = BigDecimal.valueOf(50.00);
     public static final Integer DEFAULT_QUANTITY = 15;
     public static final Boolean DEFAULT_IS_AVAILABLE = true;
 
@@ -20,7 +22,7 @@ public class UpdateProductRequestBuilder {
     private String name = DEFAULT_NAME;
     private String description = DEFAULT_DESCRIPTION;
     private Categories categories = DEFAULT_CATEGORIES;
-    private double price = DEFAULT_PRICE;
+    private BigDecimal price = DEFAULT_PRICE;
     private Integer quantity = DEFAULT_QUANTITY;
     private Boolean isAvailable = DEFAULT_IS_AVAILABLE;
 
@@ -52,7 +54,7 @@ public class UpdateProductRequestBuilder {
         return this;
     }
 
-    public UpdateProductRequestBuilder withPrice(Double price) {
+    public UpdateProductRequestBuilder withPrice(BigDecimal price) {
         this.price = price;
         return this;
     }
