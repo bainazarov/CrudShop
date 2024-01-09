@@ -13,6 +13,9 @@ spring:
     cache-names: exchangeRate
     caffeine:
       spec: maximumSize=500, expireAfterAccess=60s
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
@@ -29,6 +32,8 @@ logging:
     org.springframework.cache: TRACE
 
 app:
+  kafka:
+    enabled: true
   scheduling:
     period: 30000
     priceIncreasePercentage: 10
@@ -40,3 +45,7 @@ addressservice:
 interaction:
   rate:
     stub: false
+
+kafka:
+  bootstrapAddress: localhost:9091
+  groupId: group2

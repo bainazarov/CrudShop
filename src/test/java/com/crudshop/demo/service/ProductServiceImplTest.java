@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -132,7 +133,7 @@ public class ProductServiceImplTest {
                 .withName("Слива")
                 .withDescription("Зеленый")
                 .withCategories(Categories.VEGETABLES)
-                .withPrice(25.00)
+                .withPrice(BigDecimal.valueOf(25.00))
                 .withQuantity(25)
                 .build();
 
