@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -28,10 +29,12 @@ public class EventControllerImpl implements EventController {
                 .build();
     }
 
+
     @Override
     public void sentKafkaEvent(@Valid HttpEvent httpEvent) throws JsonProcessingException {
-        UUID key = UUID.randomUUID();
 
-        producer.sendEvent(Producer.CUSTOM_TOPIC, String.valueOf(key), httpEvent);
+        UUID kafkaKey = UUID.randomUUID();
+
+        producer.sendEvent(Producer.CUSTOM_TOPIC, String.valueOf(kafkaKey), httpEvent);
     }
 }

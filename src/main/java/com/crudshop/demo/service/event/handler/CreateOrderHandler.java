@@ -9,8 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.util.UUID;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -28,10 +26,8 @@ public class CreateOrderHandler implements EventHandler<CreateOrderEventData> {
     @Override
     public String handleEvent(CreateOrderEventData eventSource) {
         Assert.notNull(eventSource, "EventSource must not be null");
-
-        UUID orderId = orderService.createOrder(eventSource.getCustomerId(), eventSource.getDeliveryAddress(),
-                eventSource.getProducts());
-
-        return "Заказ успешно создан. Идентификатор заказа: " + orderId;
+        orderService.createOrder(eventSource.getCustomerId(), eventSource.getDeliveryAddress(),
+                eventSource.getProducts(), eventSource.getKey());
+        return "Ключ заказа: " + eventSource.getKey();
     }
 }

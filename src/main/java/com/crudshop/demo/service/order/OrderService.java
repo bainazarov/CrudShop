@@ -14,7 +14,8 @@ import java.util.UUID;
 
 @Component
 public interface OrderService {
-    UUID createOrder(final UUID customerId, final String address, final List<OrderedProductInfo> productIds);
+    UUID createOrder(final UUID customerId, final String address,
+                     final List<OrderedProductInfo> productIds, final String key);
 
     List<ProductProjection> getOrderById(final UUID orderId,final UUID customerId);
 

@@ -24,6 +24,12 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/changelog.xml
 
+  data:
+    redis:
+      host: ${REDIS_SERVER:redis}
+      port: 6379
+      password: ${REDIS_PASSWORD:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81}
+
 logging:
   level:
     root: INFO
@@ -49,3 +55,8 @@ interaction:
 kafka:
   bootstrapAddress: localhost:9091
   groupId: group2
+
+redis:
+  host: 127.0.0.1
+  port: 6379
+  password: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81

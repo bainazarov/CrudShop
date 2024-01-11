@@ -29,7 +29,8 @@ public interface OrderController {
 
     @PostMapping
     UUID createOrder(@RequestParam final UUID customerId,
-                     @RequestBody @Valid final CreateOrderRequest request);
+                     @RequestBody @Valid final CreateOrderRequest request,
+                     @RequestHeader(name = "idempotency-key") final String key);
 
     @PutMapping("/{orderId}")
     GetOrderResponse updateStatusOnOrder(@PathVariable final UUID orderId,

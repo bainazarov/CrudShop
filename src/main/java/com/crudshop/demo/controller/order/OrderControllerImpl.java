@@ -32,8 +32,12 @@ public class OrderControllerImpl implements OrderController {
 
     @Override
     public UUID createOrder(final UUID customerId,
-                            final CreateOrderRequest request) {
-        final UUID requestId = orderService.createOrder(customerId, request.getDeliveryAddress(), request.getProducts());
+                            final CreateOrderRequest request,
+                            final String key) {
+        log.info("Idempotency key: {}", key);
+
+        final UUID requestId = orderService.createOrder(customerId,
+                request.getDeliveryAddress(), request.getProducts(), key);
         log.info("Создали заказ на адрес " + request.getDeliveryAddress());
 
         return requestId;
