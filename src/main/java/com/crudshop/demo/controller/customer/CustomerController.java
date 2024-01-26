@@ -16,7 +16,7 @@ import java.util.UUID;
 public interface CustomerController {
 
     @PostMapping
-    UUID createProduct(@RequestBody @Valid final CreateCustomerRequest request);
+    UUID createCustomer(@RequestBody @Valid final CreateCustomerRequest request);
 
     @GetMapping("/{userId}")
     List<GetCustomerOrders> getOrdersByCustomerId (@PathVariable final UUID userId);

@@ -17,6 +17,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
@@ -39,6 +40,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @MeasureExecutionTime
     public UUID createProduct(final ProductDto productDto) {
+//        SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+
         final Optional<ProductEntity> existingProduct = productRepository.findByArticle(productDto.getArticle());
         existingProduct.ifPresent(entity -> {
             throw new ArticleAlreadyExistsException("Продукт с таким артикулом уже существует", entity.getId());
