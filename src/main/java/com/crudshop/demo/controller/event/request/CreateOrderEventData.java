@@ -26,6 +26,9 @@ public class CreateOrderEventData implements HttpEvent {
     @Valid
     private final List<OrderedProductInfo> products;
 
+    @NotBlank(message = "key can not be blank")
+    private final String key;
+
     @Override
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public Event getEvent() {

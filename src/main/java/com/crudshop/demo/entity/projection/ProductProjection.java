@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -18,5 +19,5 @@ public class ProductProjection {
     private UUID productId;
     private String description;
     private Integer quantity;
-    private Double totalPrice;
+    private BigDecimal totalPrice;
 }

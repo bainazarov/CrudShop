@@ -24,7 +24,7 @@ public class CustomerControllerImpl implements CustomerController {
 
 
     @Override
-    public UUID createProduct(final CreateCustomerRequest request) {
+    public UUID createCustomer(final CreateCustomerRequest request) {
         final CustomerDto customerDto = conversionService.convert(request, CustomerDto.class);
         final UUID createdCustomerId = customerService.createCustomer(customerDto);
         log.info("Создали пользователя с id " + createdCustomerId);

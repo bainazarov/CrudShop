@@ -7,7 +7,6 @@ import com.crudshop.demo.dto.CustomerDto;
 import com.crudshop.demo.dto.OrderDto;
 import com.crudshop.demo.dto.OrderWithCustomerDto;
 import com.crudshop.demo.entity.CustomerEntity;
-import com.crudshop.demo.entity.IdempKey;
 import com.crudshop.demo.entity.OrderEntity;
 import com.crudshop.demo.entity.OrderStatus;
 import com.crudshop.demo.entity.OrderedProduct;
@@ -20,12 +19,12 @@ import com.crudshop.demo.exception.OrderNotFoundException;
 import com.crudshop.demo.exception.ProductNotFoundException;
 import com.crudshop.demo.interaction.GetINNClient;
 import com.crudshop.demo.repository.CustomerRepository;
+import com.crudshop.demo.repository.InMemoryStorage;
 import com.crudshop.demo.repository.OrderRepository;
 import com.crudshop.demo.repository.OrderedProductRepository;
 import com.crudshop.demo.repository.ProductRepository;
-import com.crudshop.demo.repository.RedisRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,15 +38,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@ConditionalOnMissingBean(OrderServiceImplLocal.class)
-public class OrderServiceImpl implements OrderService {
+@Profile("local")
+public class OrderServiceImplLocal implements OrderService {
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
     private final OrderedProductRepository orderedProductRepository;
     private final GetINNClient getINNClient;
-    private final RedisRepository redisRepository;
-
+    private final InMemoryStorage inMemoryStorage;
 
     @Override
     @Transactional
@@ -72,9 +70,9 @@ public class OrderServiceImpl implements OrderService {
         Map<UUID, ProductEntity> productMap = productList.stream()
                 .collect(Collectors.toMap(ProductEntity::getId, product -> product));
 
-        Optional<IdempKey> idempKeyOptional = redisRepository.findById(key);
-        if (idempKeyOptional.isPresent()) {
-            return idempKeyOptional.get().getOrderId();
+        Optional<UUID> orderIdOptional = Optional.ofNullable(inMemoryStorage.findOrderIdByKey(key));
+        if (orderIdOptional.isPresent()) {
+            return orderIdOptional.get();
         }
 
         final List<OrderedProduct> orderedProducts = products.stream()
@@ -113,8 +111,7 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
         orderedProductRepository.saveAll(orderedProducts);
 
-        IdempKey idempKey = new IdempKey(key, order.getId());
-        redisRepository.save(idempKey);
+        inMemoryStorage.saveIdempKey(key, order.getId());
 
         return order.getId();
     }
@@ -199,7 +196,6 @@ public class OrderServiceImpl implements OrderService {
                 .deliveryAddress(updatedOrder.getDeliveryAddress())
                 .build();
     }
-
 
     @Override
     @Transactional

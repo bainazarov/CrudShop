@@ -49,3 +49,8 @@ interaction:
 kafka:
   bootstrapAddress: localhost:9091
   groupId: group2
+
+redis:
+  host: 127.0.0.1
+  port: 6379
+  password: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
