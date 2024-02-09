@@ -23,6 +23,25 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
     }
 
+    @ExceptionHandler(OrderNotFoundException.class)
+    protected ResponseEntity<ErrorDetails> handleOrderNotFoundException(OrderNotFoundException e) {
+        ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
+    }
+
+
+    @ExceptionHandler(CustomerNotFoundException.class)
+    protected ResponseEntity<ErrorDetails> handleCustomerNotFoundException(CustomerNotFoundException e) {
+        ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
+    }
+
+    @ExceptionHandler(DocumentNotFoundException.class)
+    protected ResponseEntity<ErrorDetails> handleDocumentNotFoundException(DocumentNotFoundException e) {
+        ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorDetails> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         BindingResult bindingResult = e.getBindingResult();
@@ -49,6 +68,34 @@ public class GlobalExceptionHandler {
                 .orElseGet(e::getMessage);
 
         ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), errorMessage, LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    protected ResponseEntity<ErrorDetails> handleEmailAlreadyExistsException(EmailAlreadyExistsException e) {
+        String errorMessage = Optional.ofNullable(e.getExistedEmailId())
+                .map(id -> e.getMessage() + " id + " + id)
+                .orElseGet(e::getMessage);
+
+        ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), errorMessage, LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
+    }
+
+    @ExceptionHandler(CreatingDirectoryException.class)
+    protected ResponseEntity<ErrorDetails> handleCreatingDirectoryException(CreatingDirectoryException e) {
+        ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorDetails);
+    }
+
+    @ExceptionHandler(CopyingFileException.class)
+    protected ResponseEntity<ErrorDetails> handleCopyingFileException(CopyingFileException e) {
+        ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorDetails);
+    }
+
+    @ExceptionHandler(NotEnoughQuantityForProductException.class)
+    protected ResponseEntity<ErrorDetails> handleNotEnoughQuantityForProductException(NotEnoughQuantityForProductException e) {
+        ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorDetails);
     }
 }

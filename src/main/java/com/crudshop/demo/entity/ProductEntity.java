@@ -15,6 +15,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -47,10 +48,13 @@ public class ProductEntity {
     private Categories categories;
 
     @Column(name = "price", nullable = false)
-    private double price;
+    private BigDecimal price;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
+
+    @Column(name = "is_available", columnDefinition = "boolean default true")
+    private Boolean isAvailable;
 
     @CreationTimestamp
     @Column(name = "last_quantity_change", nullable = false)
@@ -59,4 +63,5 @@ public class ProductEntity {
     @CreationTimestamp
     @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+  
 }

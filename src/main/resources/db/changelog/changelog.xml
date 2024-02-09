@@ -7,4 +7,8 @@
 
     <include file="001-create-table-products.xml" relativeToChangelogFile="true"/>
     <include file="002-insert-article-in-products.xml" relativeToChangelogFile="true"/>
+    <include file="003-insert-is-available-in-products.xml" relativeToChangelogFile="true"/>
+    <include file="004-create-table-customers.xml" relativeToChangelogFile="true"/>
+    <include file="005-create-table-orders.xml" relativeToChangelogFile="true"/>
+    <include file="006-create-table-ordered_product.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

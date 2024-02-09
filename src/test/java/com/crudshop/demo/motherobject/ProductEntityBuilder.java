@@ -3,6 +3,7 @@ package com.crudshop.demo.motherobject;
 import com.crudshop.demo.entity.Categories;
 import com.crudshop.demo.entity.ProductEntity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -15,8 +16,9 @@ public class ProductEntityBuilder {
     public static final String DEFAULT_NAME = "Яблоко";
     public static final String DEFAULT_DESCRIPTION = "Круглое красное";
     public static final Categories DEFAULT_CATEGORIES = FRUIT;
-    public static final double DEFAULT_PRICE = 50.00;
+    public static final BigDecimal DEFAULT_PRICE = BigDecimal.valueOf(50.00);
     public static final Integer DEFAULT_QUANTITY = 15;
+    public static final Boolean DEFAULT_IS_AVAILABLE = true;
     public static final LocalDateTime DEFAULT_LAST_QUANTITY_CHANGE = LocalDateTime.now();
     public static final LocalDateTime DEFAULT_CREATED_AT = LocalDateTime.now();
 
@@ -26,8 +28,9 @@ public class ProductEntityBuilder {
     private String name = DEFAULT_NAME;
     private String description = DEFAULT_DESCRIPTION;
     private Categories categories = DEFAULT_CATEGORIES;
-    private double price = DEFAULT_PRICE;
+    private BigDecimal price = DEFAULT_PRICE;
     private Integer quantity = DEFAULT_QUANTITY;
+    private Boolean isAvailable = DEFAULT_IS_AVAILABLE;
     private LocalDateTime lastQuantityChange = DEFAULT_LAST_QUANTITY_CHANGE;
     private LocalDateTime createdAt = DEFAULT_CREATED_AT;
 
@@ -63,13 +66,18 @@ public class ProductEntityBuilder {
         return this;
     }
 
-    public ProductEntityBuilder withPrice(double price) {
+    public ProductEntityBuilder withPrice(BigDecimal price) {
         this.price = price;
         return this;
     }
 
     public ProductEntityBuilder withQuantity(Integer quantity) {
         this.quantity = quantity;
+        return this;
+    }
+
+    public ProductEntityBuilder withIsAvailable(Boolean isAvailable) {
+        this.isAvailable = isAvailable;
         return this;
     }
 
@@ -92,6 +100,7 @@ public class ProductEntityBuilder {
                 .categories(categories)
                 .price(price)
                 .quantity(quantity)
+                .isAvailable(isAvailable)
                 .lastQuantityChange(lastQuantityChange)
                 .createdAt(createdAt)
                 .build();

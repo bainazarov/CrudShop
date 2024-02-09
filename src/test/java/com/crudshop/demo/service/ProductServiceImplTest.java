@@ -8,6 +8,7 @@ import com.crudshop.demo.exception.ProductNotFoundException;
 import com.crudshop.demo.motherobject.ProductDtoBuilder;
 import com.crudshop.demo.motherobject.ProductEntityBuilder;
 import com.crudshop.demo.repository.ProductRepository;
+import com.crudshop.demo.service.product.ProductServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -131,7 +133,7 @@ public class ProductServiceImplTest {
                 .withName("Слива")
                 .withDescription("Зеленый")
                 .withCategories(Categories.VEGETABLES)
-                .withPrice(25.00)
+                .withPrice(BigDecimal.valueOf(25.00))
                 .withQuantity(25)
                 .build();
 

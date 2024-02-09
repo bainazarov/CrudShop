@@ -3,6 +3,7 @@ package com.crudshop.demo.motherobject;
 import com.crudshop.demo.dto.ProductDto;
 import com.crudshop.demo.entity.Categories;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -15,8 +16,9 @@ public class ProductDtoBuilder {
     public static final String DEFAULT_NAME = "Яблоко";
     public static final String DEFAULT_DESCRIPTION = "Круглое красное";
     public static final Categories DEFAULT_CATEGORIES = FRUIT;
-    public static final double DEFAULT_PRICE = 50.00;
+    public static final BigDecimal DEFAULT_PRICE = BigDecimal.valueOf(50.00);
     public static final Integer DEFAULT_QUANTITY = 15;
+    public static final Boolean DEFAULT_IS_AVAILABLE = true;
     public static final LocalDateTime DEFAULT_LAST_QUANTITY_CHANGE = LocalDateTime.now();
     public static final LocalDateTime DEFAULT_CREATED_AT = LocalDateTime.now();
 
@@ -26,8 +28,9 @@ public class ProductDtoBuilder {
     private String name = DEFAULT_NAME;
     private String description = DEFAULT_DESCRIPTION;
     private Categories categories = DEFAULT_CATEGORIES;
-    private double price = DEFAULT_PRICE;
+    private BigDecimal price = DEFAULT_PRICE;
     private Integer quantity = DEFAULT_QUANTITY;
+    public Boolean isAvailable = DEFAULT_IS_AVAILABLE;
     private LocalDateTime lastQuantityChange = DEFAULT_LAST_QUANTITY_CHANGE;
     private LocalDateTime createdAt = DEFAULT_CREATED_AT;
 
@@ -63,13 +66,18 @@ public class ProductDtoBuilder {
         return this;
     }
 
-    public ProductDtoBuilder withPrice(double price) {
+    public ProductDtoBuilder withPrice(BigDecimal price) {
         this.price = price;
         return this;
     }
 
     public ProductDtoBuilder withQuantity(Integer quantity) {
         this.quantity = quantity;
+        return this;
+    }
+
+    public ProductDtoBuilder withIsAvailable(Boolean isAvailable) {
+        this.isAvailable = isAvailable;
         return this;
     }
 
@@ -92,6 +100,7 @@ public class ProductDtoBuilder {
                 .categories(categories)
                 .price(price)
                 .quantity(quantity)
+                .isAvailable(isAvailable)
                 .lastQuantityChange(lastQuantityChange)
                 .createdAt(createdAt)
                 .build();

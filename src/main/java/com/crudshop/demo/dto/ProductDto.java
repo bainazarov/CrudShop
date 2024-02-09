@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Value;
 import org.springframework.lang.Nullable;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -25,9 +26,11 @@ public class ProductDto {
     @Nullable
     Categories categories;
 
-    double price;
+    BigDecimal price;
 
     Integer quantity;
+
+    Boolean isAvailable;
 
     LocalDateTime lastQuantityChange;
 

@@ -13,17 +13,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "Контроллер для продуктов")
+@RequestMapping("/products")
 public interface ProductController {
 
     @PostMapping
     @Operation(summary = "Регистрация продукта")
-    UUID createProduct(@RequestBody @Valid final CreateProductRequest createProductRequest);
+    UUID createProduct(@RequestBody @Valid final CreateProductRequest request);
 
     @GetMapping("/{id}")
     @Operation(summary = "Получить продукт по ID")
@@ -41,4 +44,11 @@ public interface ProductController {
     @Operation(summary = "Получить все продукты")
     List<GetProductResponse> findAll(@RequestParam(defaultValue = "0") final int page,
                                      @RequestParam(defaultValue = "10") final int size);
+
+    @GetMapping("/search")
+    @Operation(summary = "Отфильтровать продукты по запросу")
+    List<GetProductResponse> searchProducts(@RequestParam(required = false) final String name,
+                                            @RequestParam(required = false) final Integer quantity,
+                                            @RequestParam(required = false) final BigDecimal price,
+                                            @RequestParam(required = false) final Boolean isAvailable);
 }
