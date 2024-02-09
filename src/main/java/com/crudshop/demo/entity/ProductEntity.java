@@ -63,5 +63,5 @@ public class ProductEntity {
     @CreationTimestamp
     @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
+  
 }
